@@ -182,22 +182,4 @@ All schema definitions are exportable and ready to import in [`cms/strapi-schema
 > **Answer:** *"Every Venture schema contains a boolean `published: true | false` field. The public API `GET /api/ventures` filters out unpublished drafts by default, while the CMS Admin calls `GET /api/ventures?drafts=true`. In `/admin`, editors can toggle any venture between Live and Draft with a single click."*
 
 ### Q4: *"What did you deliberately skip, and why?"*
-> **Answer:** *"I deliberately skipped third-party OAuth/SSO login and heavy cloud asset uploads (AWS S3) to focus on the essential requirements: a clean editorial design system, 100% dynamic CMS wiring, zero hardcoded content, a structured case-study detail page, and an interactive lead capture CRM."*
-
----
-
-## 🚀 1-Click Unified Vercel Deployment
-
-Deploy **BOTH the Frontend AND the Headless CMS API together on Vercel as a single unified project**:
-
-1. Push this repository to GitHub:
-   ```bash
-   git add .
-   git commit -m "Techdome Venture Studio Redesign with Headless CMS"
-   git push origin main
-   ```
-2. Import the repository into [Vercel](https://vercel.com).
-3. Click **Deploy** (No custom configuration or environment variables needed!):
-   * **Frontend:** Automatically built and served at `/`
-   * **Headless CMS API:** Automatically served via Vercel Serverless Function at `/api/*`
-   * **CMS Admin Studio:** Accessible at `/admin`
+> **Answer:** *"I deliberately skipped third-party OAuth/SSO login and heavy cloud asset uploads (AWS S3) to focus on the essential requirements: a clean editorial design system, 100% dynamic CMS wiring, zero hardcoded content, a structured case-study detail page, and an interactive lead capture CRM."
