@@ -2,7 +2,7 @@
   "globals": {
     "studio_name": "Techdome Ventures",
     "hero_eyebrow": "TECHDOME VENTURES · HYDERABAD",
-    "hero_headline": "We co-found and engineer the high-conviction software ventures.",
+    "hero_headline": "We co-found and engineer high-conviction software ventures.",
     "hero_subline": "Techdome acts as an institutional co-founder — deploying capital, modern technical architecture, and go-to-market acceleration from 0th Day.",
     "stats_metric_1_val": "4",
     "stats_metric_1_label": "Incubated Ventures",
@@ -15,7 +15,7 @@
     "contact_email": "contact@techdome.net.in",
     "location": "Hyderabad, India",
     "studio_website": "https://techdome.net.in",
-    "updatedAt": "2026-08-24T07:52:31.044Z"
+    "updatedAt": "2026-08-24T07:53:14.794Z"
   },
   "ventures": [
     {

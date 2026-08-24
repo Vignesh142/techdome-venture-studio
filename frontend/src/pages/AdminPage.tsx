@@ -33,6 +33,7 @@ import {
   Sparkles,
   Loader2,
   Image as ImageIcon,
+  Lock,
   LogOut,
   KeyRound
 } from 'lucide-react';
@@ -296,13 +297,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
             <div className="flex flex-col items-center text-center mb-8">
               <img
                 src="/techdome.png"
-                alt="Techdome Official Logo"
-                className="h-12 w-auto object-contain mb-4"
+                alt="Techdome"
+                className="h-10 w-auto object-contain mb-3"
               />
-              <h2 className="font-display font-bold text-2xl text-black tracking-tight">
-                Techdome CMS Studio
-              </h2>
-              <p className="text-xs text-neutral-500 font-mono mt-1 max-w-xs leading-relaxed">
+              <span className="font-mono text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">
+                CMS Studio Panel
+              </span>
+              <p className="text-xs text-neutral-500 font-mono mt-2 max-w-xs leading-relaxed">
                 Institutional Content Management System. Enter access key to proceed.
               </p>
             </div>
@@ -420,7 +421,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
       <div className="md:hidden bg-white border-b border-neutral-200 px-4 py-3.5 flex items-center justify-between z-30 shrink-0">
         <div className="flex items-center gap-2.5">
           <img src="/techdome.png" alt="Techdome" className="h-7 w-auto object-contain" />
-          <span className="font-display font-bold text-base text-black">Techdome CMS</span>
+          <span className="font-mono text-[10px] text-neutral-400 uppercase tracking-widest pl-2 border-l border-neutral-300 font-semibold">CMS</span>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -439,7 +440,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
         </div>
       </div>
 
-      {/* FULL-HEIGHT LEFT SIDEBAR WITH OFFICIAL LOGO */}
+      {/* FULL-HEIGHT LEFT SIDEBAR WITH OFFICIAL LOGO (No duplicated text) */}
       <aside
         className={`w-72 shrink-0 bg-white border-r border-neutral-200 flex flex-col justify-between p-6 z-40 transition-transform duration-300 ease-out absolute md:static inset-y-0 left-0 ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
@@ -451,17 +452,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
             <div className="flex items-center gap-3">
               <img
                 src="/techdome.png"
-                alt="Techdome Official Logo"
+                alt="Techdome"
                 className="h-8 w-auto object-contain"
               />
-              <div className="flex flex-col">
-                <span className="font-display font-bold text-base tracking-tight text-black">
-                  Techdome CMS
-                </span>
-                <span className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider">
-                  Headless Studio
-                </span>
-              </div>
+              <span className="font-mono text-[10px] text-neutral-400 uppercase tracking-wider pl-3 border-l border-neutral-200 font-semibold">
+                Studio CMS
+              </span>
             </div>
 
             <button

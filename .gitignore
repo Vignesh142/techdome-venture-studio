@@ -2,6 +2,7 @@
 node_modules/
 .pnp
 .pnp.js
+cms/node_modules
 
 # Production build output
 dist/
