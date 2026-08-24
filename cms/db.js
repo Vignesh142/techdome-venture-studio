@@ -73,7 +73,7 @@ const initialSeed = {
       title: "Venture Co-Founding",
       badge: "Equity & Shared Risk",
       timeline: "Day 0 → Series A",
-      description: "For visionary domain founders seeking an institutional technical co-founder from Day 0.",
+      description: "For visionary founders seeking an institutional technical co-founder from Day 0.",
       features: [
         "Sweat equity co-building & technical leadership",
         "Day-0 system architecture & production MVP",
@@ -254,38 +254,38 @@ const initialSeed = {
   ]
 };
 
-// Database persistence helpers
+// Database in-memory cache for serverless environments
+let memoryDb = null;
+
 function readDb() {
+  if (memoryDb) return memoryDb;
   try {
-    if (!fs.existsSync(DATA_FILE)) {
-      fs.writeFileSync(DATA_FILE, JSON.stringify(initialSeed, null, 2), 'utf-8');
-      return initialSeed;
+    if (fs.existsSync(DATA_FILE)) {
+      const raw = fs.readFileSync(DATA_FILE, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.ventures && parsed.globals) {
+        if (!parsed.engagement_models) {
+          parsed.engagement_models = initialSeed.engagement_models;
+        }
+        memoryDb = parsed;
+        return memoryDb;
+      }
     }
-    const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-    const parsed = JSON.parse(raw);
-    if (!parsed.ventures || !parsed.globals) {
-      fs.writeFileSync(DATA_FILE, JSON.stringify(initialSeed, null, 2), 'utf-8');
-      return initialSeed;
-    }
-    if (!parsed.engagement_models) {
-      parsed.engagement_models = initialSeed.engagement_models;
-      saveDb(parsed);
-    }
-    return parsed;
   } catch (err) {
-    console.error('[CMS DB] Read error, resetting to initial seed:', err.message);
-    fs.writeFileSync(DATA_FILE, JSON.stringify(initialSeed, null, 2), 'utf-8');
-    return initialSeed;
+    console.error('[CMS DB] Read error, using in-memory seed:', err.message);
   }
+  memoryDb = JSON.parse(JSON.stringify(initialSeed));
+  return memoryDb;
 }
 
 function saveDb(data) {
+  memoryDb = data;
   try {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
     return true;
   } catch (err) {
-    console.error('[CMS DB] Write error:', err.message);
-    return false;
+    // In serverless read-only environments (Vercel Lambda), in-memory is maintained
+    return true;
   }
 }
 
@@ -519,8 +519,9 @@ function deleteInquiry(id) {
 }
 
 function resetToDefault() {
-  saveDb(initialSeed);
-  return initialSeed;
+  memoryDb = JSON.parse(JSON.stringify(initialSeed));
+  saveDb(memoryDb);
+  return memoryDb;
 }
 
 module.exports = {

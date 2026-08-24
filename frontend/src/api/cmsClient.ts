@@ -1,6 +1,7 @@
 import { Venture, GlobalSettings, StudioService, EngagementModel, ClientInquiry, ApiResponse, ApiHealthResponse } from '../types';
 
-const CMS_BASE_URL = import.meta.env.VITE_CMS_URL || 'http://localhost:1337';
+// In development, default to local CMS port 1337; in production on Vercel, use relative paths
+const CMS_BASE_URL = import.meta.env.VITE_CMS_URL ?? (import.meta.env.DEV ? 'http://localhost:1337' : '');
 const CMS_API_TOKEN = import.meta.env.VITE_CMS_TOKEN || '';
 
 export class CmsApiError extends Error {
@@ -91,7 +92,7 @@ async function fetchFromCms<T>(endpoint: string, options: RequestInit = {}): Pro
     }
     const isNetworkError = error instanceof TypeError && error.message.includes('fetch');
     const msg = isNetworkError
-      ? `Cannot connect to Headless CMS at ${CMS_BASE_URL}. Ensure CMS backend is running.`
+      ? `Cannot connect to Headless CMS at ${CMS_BASE_URL || 'current host'}. Ensure CMS backend is running.`
       : (error instanceof Error ? error.message : 'Unknown CMS error occurred');
     throw new CmsApiError(msg);
   }
@@ -100,7 +101,7 @@ async function fetchFromCms<T>(endpoint: string, options: RequestInit = {}): Pro
 export const cmsClient = {
   // Provider info
   getBaseUrl(): string {
-    return CMS_BASE_URL;
+    return CMS_BASE_URL || window.location.origin;
   },
 
   // Health

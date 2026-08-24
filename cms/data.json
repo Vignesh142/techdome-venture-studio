@@ -109,7 +109,7 @@
       "slug": "omnigraph",
       "tagline": "Distributed Vector Intelligence for Logistics",
       "one_liner": "Dynamic topological routing, predictive supply chain intelligence, and real-time freight optimization across international transport corridors.",
-      "stage": "Building",
+      "stage": "Exited",
       "year": "2024",
       "metrics": "Live Pilot with 4 Tier-1 Carriers",
       "founders": "Vikram R. (Industry Lead) & Techdome Labs",
@@ -126,7 +126,7 @@
       ],
       "description": "OmniGraph combines real-time geospatial graphs with deep predictive analytics to solve multi-modal freight disruptions before they propagate. Co-founded with logistics veterans, the platform models over 2.4 million daily transit events with millisecond route re-computation.",
       "published": true,
-      "updatedAt": "2026-08-24T16:15:00.000Z"
+      "updatedAt": "2026-08-24T14:29:21.575Z"
     },
     {
       "id": 3,
@@ -216,6 +216,18 @@
       "status": "In Review",
       "createdAt": "2026-08-24T13:46:33.376Z",
       "updatedAt": "2026-08-24T13:46:55.610Z"
+    },
+    {
+      "id": 4,
+      "name": "sharah Jenkins",
+      "email": "sarah@gmail.com",
+      "company": "Acme Health",
+      "project_type": "Venture Co-Founding",
+      "budget_range": "$50k - $150k",
+      "timeline": "Immediate (Within 30 Days)",
+      "message": "Acme Health Venture Co- founding from start and all",
+      "status": "New",
+      "createdAt": "2026-08-24T14:28:59.913Z"
     }
   ],
   "engagement_models": [
