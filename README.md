@@ -170,16 +170,16 @@ All schema definitions are exportable and ready to import in [`cms/strapi-schema
 
 ---
 
-## 🎙️ Interview Defense & CEO Questions Guide
+## 💡 Technical Decisions & Architecture FAQs
 
-### Q1: *"Why did you choose Strapi over Contentful or Sanity?"*
-> **Answer:** *"Strapi gives Techdome 100% data ownership inside our own AWS cloud perimeter with zero per-seat licensing fees (unlike Contentful or Sanity which charge hundreds of dollars per seat as teams scale). It provides native Node.js TypeScript extensibility, built-in Draft/Publish RBAC workflows, and auto-generated REST/GraphQL APIs that match our venture models perfectly."*
+### Why Strapi over SaaS CMS platforms (Contentful / Sanity)?
+> **Data Ownership & Cost:** Strapi provides complete data ownership within our own cloud perimeter (AWS/VPC) with zero per-seat licensing fees or API call caps. Its open-source Node.js TypeScript foundation, native Draft/Publish RBAC workflows, and auto-generated REST/GraphQL APIs match our venture data models seamlessly.
 
-### Q2: *"Point at your fetch call — what happens if the CMS is down?"*
-> **Answer:** *"In `src/api/cmsClient.ts`, all network requests are wrapped in custom `CmsApiError` handling. If the CMS goes offline, the app does not crash or throw an unhandled white screen. It renders an editorial `CmsErrorBanner` explaining the connection status and provides an instant 'Retry Connection' button."*
+### CMS Downtime Resilience & Error Handling
+> **Graceful Degradation:** All network requests in `src/api/cmsClient.ts` are wrapped in structured `CmsApiError` handling. If the CMS service experiences downtime or network latency, the frontend avoids unhandled blank screen crashes by rendering an informative diagnostic `CmsErrorBanner` with an instant retry trigger.
 
-### Q3: *"Where does draft content live in your model?"*
-> **Answer:** *"Every Venture schema contains a boolean `published: true | false` field. The public API `GET /api/ventures` filters out unpublished drafts by default, while the CMS Admin calls `GET /api/ventures?drafts=true`. In `/admin`, editors can toggle any venture between Live and Draft with a single click."*
+### Content Lifecycle & Draft/Publish Architecture
+> **Editorial Control:** Every venture model includes a boolean `published` property. Public-facing routes (`GET /api/ventures`) filter out draft items by default, while authenticated studio partners can toggle items between Live and Draft states with atomic persistence via the CMS Admin interface.
 
-### Q4: *"What did you deliberately skip, and why?"*
-> **Answer:** *"I deliberately skipped third-party OAuth/SSO login and heavy cloud asset uploads (AWS S3) to focus on the essential requirements: a clean editorial design system, 100% dynamic CMS wiring, zero hardcoded content, a structured case-study detail page, and an interactive lead capture CRM."
+### Architectural Scope & Trade-offs
+> **Deliberate Prioritization:** Auth and cloud storage were scoped to lightweight session keys and CDN-hosted media to maximize focus on the core requirements: an editorial design system, 100% dynamic CMS wiring, zero hardcoded content, responsive layouts, and an interactive lead capture CRM.
