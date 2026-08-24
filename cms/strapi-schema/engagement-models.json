@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "engagement_models",
+  "info": {
+    "singularName": "engagement-model",
+    "pluralName": "engagement-models",
+    "displayName": "Engagement Model",
+    "description": "Techdome Partnership and Commercial Pricing Structures"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "badge": {
+      "type": "string",
+      "required": true
+    },
+    "timeline": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "features": {
+      "type": "json"
+    },
+    "cta": {
+      "type": "string",
+      "default": "Get Started"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

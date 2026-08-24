@@ -134,7 +134,7 @@
       "slug": "pulsescale-telemetry",
       "tagline": "Sub-Millisecond High-Frequency Edge Compute",
       "one_liner": "Distributed streaming analytics and edge telemetry processing for mission-critical industrial manufacturing and robotics.",
-      "stage": "Launched",
+      "stage": "Building",
       "year": "2023",
       "metrics": "Acquired by Global Industrial IoT Conglomerate",
       "founders": "Techdome Studio Venture Pod",
@@ -151,7 +151,7 @@
       ],
       "description": "PulseScale was engineered from Day-0 as a high-throughput edge daemon designed for embedded hardware environments. The venture reached full operational scale in 11 months before being acquired by a leading global manufacturing automation group.",
       "published": true,
-      "updatedAt": "2026-08-24T16:15:00.000Z"
+      "updatedAt": "2026-08-24T13:50:07.635Z"
     },
     {
       "id": 4,
@@ -203,6 +203,81 @@
       "message": "Need a dedicated senior engineering pod (1 Tech Lead, 3 Full-Stack Engineers) to modernize our real-time warehouse orchestration microservices.",
       "status": "Contacted",
       "createdAt": "2026-08-23T15:30:00.000Z"
+    },
+    {
+      "id": 3,
+      "name": "Kunal",
+      "email": "kunal@nex-tech.com",
+      "company": "Stealth",
+      "project_type": "Venture Co-Founding",
+      "budget_range": "< $25k",
+      "timeline": "Immediate (Within 30 Days)",
+      "message": "We are looking for an institutional technical co-founder to build an automated wealth management platform with AI-driven tax harvesting. Interested in discussing equity co-building.",
+      "status": "In Review",
+      "createdAt": "2026-08-24T13:46:33.376Z",
+      "updatedAt": "2026-08-24T13:46:55.610Z"
+    }
+  ],
+  "engagement_models": [
+    {
+      "id": 1,
+      "title": "Venture Co-Founding",
+      "badge": "Equity & Shared Risk",
+      "timeline": "Day 0 → Series A",
+      "description": "For visionary domain founders seeking an institutional technical co-founder from Day 0.",
+      "features": [
+        "Sweat equity co-building & technical leadership",
+        "Day-0 system architecture & production MVP",
+        "Seed capital support & cap table formation",
+        "Investor network access & Series A readiness"
+      ],
+      "cta": "Pitch Your Venture",
+      "featured": true
+    },
+    {
+      "id": 2,
+      "title": "Rapid 14-Day MVP Sprint",
+      "badge": "Fixed Timeline & Scope",
+      "timeline": "14-Day Sprint",
+      "description": "De-risk your product thesis with a clickable prototype, unit economics model, and feasibility blueprint in 2 weeks.",
+      "features": [
+        "14-day rapid delivery guarantee",
+        "Interactive clickable prototype & UX flows",
+        "Technical architecture & cloud feasibility",
+        "Unit economics & investor pitch deck artifact"
+      ],
+      "cta": "Book 14-Day Sprint",
+      "featured": false
+    },
+    {
+      "id": 3,
+      "title": "Enterprise AI & Cloud Foundry",
+      "badge": "Milestone Sprints",
+      "timeline": "1 – 3 Months",
+      "description": "Deploy custom private LLMs, autonomous agent pipelines, and zero-trust cloud foundations.",
+      "features": [
+        "Custom private LLM & agent orchestration",
+        "Multi-cloud zero-trust infrastructure",
+        "SOC2 / HIPAA standard compliance architecture",
+        "Full IP & source code ownership transfer"
+      ],
+      "cta": "Deploy AI Foundry",
+      "featured": false
+    },
+    {
+      "id": 4,
+      "title": "Dedicated Engineering Pods",
+      "badge": "Monthly Retainer",
+      "timeline": "Quarterly Rolling",
+      "description": "For scaling companies needing elite senior full-stack engineers and fractional technical leadership.",
+      "features": [
+        "Senior engineering pods (2-8 developers)",
+        "Direct integration into existing sprint cycles",
+        "Fractional CTO / Lead Architect oversight",
+        "Flexible 3-month rolling agreements"
+      ],
+      "cta": "Hire an Engineering Pod",
+      "featured": false
     }
   ]
 }

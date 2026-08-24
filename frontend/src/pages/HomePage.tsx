@@ -1,62 +1,90 @@
-import React, { useState } from 'react';
-import { Venture, GlobalSettings, StageFilter } from '../types';
+import React, { useState, useRef } from 'react';
+import { Venture, GlobalSettings, StudioService, EngagementModel, StageFilter } from '../types';
 import { Hero } from '../components/Hero';
 import { StudioServices } from '../components/StudioServices';
 import { VentureCard } from '../components/VentureCard';
 import { StageFilterBar } from '../components/StageFilterBar';
 import { StageTracker } from '../components/StageTracker';
 import { EngagementModels } from '../components/EngagementModels';
-import { ClientCtaSection } from '../components/ClientCtaSection';
+import { ContactSection } from '../components/ContactSection';
 import { CmsErrorBanner } from '../components/CmsErrorBanner';
-import { Layers, ArrowRight } from 'lucide-react';
+import { Layers, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HomePageProps {
   globals: GlobalSettings | null;
   ventures: Venture[];
+  services?: StudioService[];
+  models?: EngagementModel[];
   loading: boolean;
   error: string | null;
   onRetry: () => void;
   onSelectVenture: (slug: string) => void;
   onOpenAdmin: () => void;
-  onOpenBooking: (serviceName?: string) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   globals,
   ventures,
+  services,
+  models,
   loading,
   error,
   onRetry,
   onSelectVenture,
   onOpenAdmin,
-  onOpenBooking,
 }) => {
   const [currentFilter, setCurrentFilter] = useState<StageFilter>('All');
+  const venturesScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollVentures = (direction: 'left' | 'right') => {
+    if (venturesScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = venturesScrollRef.current;
+      const scrollAmount = clientWidth * 0.8;
+
+      if (direction === 'right') {
+        if (scrollLeft + clientWidth >= scrollWidth - 25) {
+          venturesScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          venturesScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      } else {
+        if (scrollLeft <= 25) {
+          venturesScrollRef.current.scrollTo({ left: scrollWidth, behavior: 'smooth' });
+        } else {
+          venturesScrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        }
+      }
+    }
+  };
 
   const filteredVentures = currentFilter === 'All'
     ? ventures
     : ventures.filter(v => v.stage === currentFilter);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFAFA] text-black relative overflow-hidden">
-      {/* Background Architectural Grid Texture */}
+    <div className="min-h-screen flex flex-col bg-[#FAFAFA] text-[#111111] relative overflow-hidden">
+      {/* 1. Sleek Architectural Top Background Grid Pattern (Radial Faded) */}
       <div 
-        className="absolute inset-0 opacity-[0.035] pointer-events-none"
+        aria-hidden="true"
+        className="absolute top-0 inset-x-0 h-[850px] opacity-[0.045] pointer-events-none z-0"
         style={{
           backgroundImage: `
-            linear-gradient(to right, #000 1px, transparent 1px),
-            linear-gradient(to bottom, #000 1px, transparent 1px)
+            linear-gradient(to right, #000000 1px, transparent 1px),
+            linear-gradient(to bottom, #000000 1px, transparent 1px)
           `,
-          backgroundSize: '40px 40px',
+          backgroundSize: '48px 48px',
+          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 60%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 60%, transparent 100%)'
         }}
       />
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-b from-neutral-200/40 via-transparent to-transparent rounded-full blur-3xl pointer-events-none" />
 
-      {/* 1. Dynamic Business-Oriented Hero with Dual CTAs & 4 Clear Stats */}
+      {/* Subtle Top Ambient Gradient Glow */}
+      <div className="absolute top-0 right-1/4 w-[550px] h-[550px] bg-gradient-to-b from-neutral-200/50 via-transparent to-transparent rounded-full blur-3xl pointer-events-none z-0" />
+
+      {/* 2. Dynamic Hero */}
       <Hero
         globals={globals}
         loading={loading}
-        onOpenBooking={() => onOpenBooking()}
       />
 
       {/* Main Container */}
@@ -66,24 +94,25 @@ export const HomePage: React.FC<HomePageProps> = ({
           <CmsErrorBanner error={error} onRetry={onRetry} isRetrying={loading} />
         )}
 
-        {/* 2. Studio Practice Areas & Capabilities (How We Build) */}
-        <StudioServices onOpenBooking={onOpenBooking} />
+        {/* 3. Practice Areas (Side-Scrolling Carousel backed by CMS) */}
+        <StudioServices services={services} />
 
-        {/* 3. All Ventures Portfolio Index & Filter Bar */}
-        <section id="portfolio" className="my-16 sm:my-24">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-6 border-b border-neutral-200 mb-10">
+        {/* 4. Portfolio Ventures (Side-Scrolling Carousel with Loop-Back Support) */}
+        <section id="portfolio" className="my-14 sm:my-20 scroll-mt-24">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-neutral-200 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-1.5 mb-1.5">
                 <Layers className="w-4 h-4 text-black" />
-                <span className="font-mono text-xs font-semibold uppercase tracking-widest text-neutral-500">
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-neutral-500">
                   Incubation Track Record
                 </span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-black tracking-tight font-display">
+              <h2 className="text-2xl sm:text-3xl font-bold text-black tracking-tight font-display">
                 Co-Founded Ventures & Case Studies
               </h2>
             </div>
 
+            {/* Stage Filter */}
             <StageFilterBar
               currentFilter={currentFilter}
               onFilterChange={setCurrentFilter}
@@ -91,16 +120,16 @@ export const HomePage: React.FC<HomePageProps> = ({
             />
           </div>
 
-          {/* Portfolio Grid with Zero Truncation Bugs */}
+          {/* Carousel Track Container with Side-End Floating Buttons */}
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="flex gap-5 overflow-hidden">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-96 rounded-3xl bg-white border border-neutral-200 animate-pulse p-6"></div>
+                <div key={i} className="w-full sm:w-[calc(50%-12px)] min-w-[85vw] sm:min-w-[360px] h-80 rounded-2xl bg-white border border-neutral-200 animate-pulse p-5 shrink-0"></div>
               ))}
             </div>
           ) : filteredVentures.length === 0 ? (
-            <div className="text-center py-24 border border-neutral-200 rounded-3xl bg-white">
-              <p className="text-neutral-500 font-mono text-sm mb-4">No ventures found for filter "{currentFilter}"</p>
+            <div className="text-center py-16 border border-neutral-200 rounded-2xl bg-white">
+              <p className="text-neutral-500 font-mono text-xs mb-3">No ventures found for filter "{currentFilter}"</p>
               <button
                 onClick={() => setCurrentFilter('All')}
                 className="text-xs font-mono text-black font-semibold underline underline-offset-4"
@@ -109,19 +138,50 @@ export const HomePage: React.FC<HomePageProps> = ({
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {filteredVentures.map((venture) => (
-                <VentureCard
-                  key={venture.id}
-                  venture={venture}
-                  onSelect={onSelectVenture}
-                />
-              ))}
+            <div className="relative group">
+              {/* Left End Floating Nav Button */}
+              <button
+                onClick={() => scrollVentures('left')}
+                className="absolute -left-2 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-white/95 backdrop-blur-md border border-neutral-300 shadow-xl hover:bg-black hover:text-white hover:border-black transition-all flex items-center justify-center opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 active:scale-95 text-black cursor-pointer"
+                title="Scroll Left (Loops to end)"
+                aria-label="Previous Venture"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              {/* Right End Floating Nav Button */}
+              <button
+                onClick={() => scrollVentures('right')}
+                className="absolute -right-2 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-white/95 backdrop-blur-md border border-neutral-300 shadow-xl hover:bg-black hover:text-white hover:border-black transition-all flex items-center justify-center opacity-80 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 active:scale-95 text-black cursor-pointer"
+                title="Scroll Right (Loops to start)"
+                aria-label="Next Venture"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+
+              {/* Horizontal Sliding Track for Ventures */}
+              <div
+                ref={venturesScrollRef}
+                className="flex gap-5 sm:gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4 pt-1 px-1"
+                style={{ scrollSnapType: 'x mandatory' }}
+              >
+                {filteredVentures.map((venture) => (
+                  <div
+                    key={venture.id}
+                    className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] min-w-[85vw] sm:min-w-[340px] lg:min-w-[360px] snap-center shrink-0"
+                  >
+                    <VentureCard
+                      venture={venture}
+                      onSelect={onSelectVenture}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>
 
-        {/* 4. Studio Stage Lifecycle Pipeline Tracker */}
+        {/* 5. Stage Lifecycle Pipeline Tracker */}
         {!loading && (
           <div id="pipeline">
             <StageTracker
@@ -131,17 +191,17 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         )}
 
-        {/* 5. Transparent Engagement Models */}
-        <EngagementModels onOpenBooking={onOpenBooking} />
+        {/* 6. Transparent Engagement Models (backed by CMS) */}
+        <EngagementModels models={models} />
 
-        {/* 6. Dynamic CMS Studio Manifesto */}
+        {/* 7. Studio Methodology Statement */}
         {globals?.manifesto_quote && (
-          <section className="my-16 sm:my-24 p-8 sm:p-14 rounded-3xl border border-neutral-200 bg-white shadow-2xs relative overflow-hidden">
+          <section className="my-14 sm:my-20 p-6 sm:p-10 rounded-3xl border border-neutral-200 bg-white shadow-2xs relative overflow-hidden">
             <div className="relative z-10">
-              <span className="font-mono text-xs font-semibold uppercase tracking-widest text-neutral-500 block mb-4">
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-neutral-500 block mb-3">
                 {globals.manifesto_headline || 'STUDIO METHODOLOGY'}
               </span>
-              <blockquote className="text-2xl sm:text-4xl font-light text-black leading-relaxed max-w-5xl mb-8 font-display">
+              <blockquote className="text-xl sm:text-2xl font-light text-black leading-relaxed max-w-4xl mb-6 font-display">
                 "{globals.manifesto_quote}"
               </blockquote>
               <div className="flex items-center gap-4">
@@ -149,7 +209,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   onClick={onOpenAdmin}
                   className="inline-flex items-center gap-2 text-xs font-mono font-semibold text-black hover:text-neutral-600 transition-colors"
                 >
-                  <span>Edit this statement in CMS Studio</span>
+                  <span>Edit in CMS Studio</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -157,8 +217,8 @@ export const HomePage: React.FC<HomePageProps> = ({
           </section>
         )}
 
-        {/* 7. Bottom High-Impact Client Conversion Banner */}
-        <ClientCtaSection onOpenBooking={() => onOpenBooking()} />
+        {/* 8. Dedicated Open Discovery Call & Lead Capture Section at the Bottom */}
+        <ContactSection />
       </main>
     </div>
   );

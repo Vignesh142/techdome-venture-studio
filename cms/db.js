@@ -33,7 +33,8 @@ const initialSeed = {
       tagline: "From Day-0 Idea to Seed & Series A",
       description: "We partner with visionary domain founders to provide full-stack technical leadership, initial seed capital, architecture, and go-to-market execution.",
       deliverables: ["Technical Architecture", "Full-Stack MVP", "Go-To-Market Engine", "Investor Network"],
-      icon: "rocket"
+      icon: "rocket",
+      highlight: "High Conviction"
     },
     {
       id: 2,
@@ -42,7 +43,8 @@ const initialSeed = {
       tagline: "Autonomous Agents, LLMs & Distributed Systems",
       description: "Custom AI pipeline development, private LLM fine-tuning, retrieval systems (RAG), and zero-trust cloud infrastructure engineered for enterprise compliance.",
       deliverables: ["Private LLM Deployment", "Autonomous Workflows", "Multi-Tenant Architecture", "SOC2 / HIPAA Compliance"],
-      icon: "cpu"
+      icon: "cpu",
+      highlight: "Enterprise Scale"
     },
     {
       id: 3,
@@ -51,7 +53,8 @@ const initialSeed = {
       tagline: "High-Velocity Embedded Product Teams",
       description: "Scale your roadmap with elite dedicated pods of senior engineers, product designers, and QA leads fully integrated into your sprint cycles.",
       deliverables: ["Fractional CTO / Lead", "Senior Full-Stack Engineers", "Continuous Delivery", "Agile Sprints"],
-      icon: "users"
+      icon: "users",
+      highlight: "Immediate Scale"
     },
     {
       id: 4,
@@ -60,7 +63,70 @@ const initialSeed = {
       tagline: "De-Risk Market Thesis Before Full Build",
       description: "A fast-paced sprint to validate customer demand, prototype UX flows, test feasibility, and create an investable proof-of-concept.",
       deliverables: ["Clickable Prototype", "Technical Roadmap", "Unit Economics Model", "Architecture Blueprint"],
-      icon: "zap"
+      icon: "zap",
+      highlight: "2-Week Sprint"
+    }
+  ],
+  engagement_models: [
+    {
+      id: 1,
+      title: "Venture Co-Founding",
+      badge: "Equity & Shared Risk",
+      timeline: "Day 0 → Series A",
+      description: "For visionary domain founders seeking an institutional technical co-founder from Day 0.",
+      features: [
+        "Sweat equity co-building & technical leadership",
+        "Day-0 system architecture & production MVP",
+        "Seed capital support & cap table formation",
+        "Investor network access & Series A readiness"
+      ],
+      cta: "Pitch Your Venture",
+      featured: true
+    },
+    {
+      id: 2,
+      title: "Rapid 14-Day MVP Sprint",
+      badge: "Fixed Timeline & Scope",
+      timeline: "14-Day Sprint",
+      description: "De-risk your product thesis with a clickable prototype, unit economics model, and feasibility blueprint in 2 weeks.",
+      features: [
+        "14-day rapid delivery guarantee",
+        "Interactive clickable prototype & UX flows",
+        "Technical architecture & cloud feasibility",
+        "Unit economics & investor pitch deck artifact"
+      ],
+      cta: "Book 14-Day Sprint",
+      featured: false
+    },
+    {
+      id: 3,
+      title: "Enterprise AI & Cloud Foundry",
+      badge: "Milestone Sprints",
+      timeline: "1 – 3 Months",
+      description: "Deploy custom private LLMs, autonomous agent pipelines, and zero-trust cloud foundations.",
+      features: [
+        "Custom private LLM & agent orchestration",
+        "Multi-cloud zero-trust infrastructure",
+        "SOC2 / HIPAA standard compliance architecture",
+        "Full IP & source code ownership transfer"
+      ],
+      cta: "Deploy AI Foundry",
+      featured: false
+    },
+    {
+      id: 4,
+      title: "Dedicated Engineering Pods",
+      badge: "Monthly Retainer",
+      timeline: "Quarterly Rolling",
+      description: "For scaling companies needing elite senior full-stack engineers and fractional technical leadership.",
+      features: [
+        "Senior engineering pods (2-8 developers)",
+        "Direct integration into existing sprint cycles",
+        "Fractional CTO / Lead Architect oversight",
+        "Flexible 3-month rolling agreements"
+      ],
+      cta: "Hire an Engineering Pod",
+      featured: false
     }
   ],
   ventures: [
@@ -123,20 +189,39 @@ const initialSeed = {
     },
     {
       id: 4,
-      name: "Synapse Core",
-      slug: "synapse-core",
-      tagline: "Enterprise Neuro-Symbolic Agent Framework",
-      one_liner: "Deterministic execution sandboxes for generative AI agents operating in regulated banking, fintech, and healthcare environments.",
+      name: "TensorPay",
+      slug: "tensorpay",
+      tagline: "Programmable B2B Treasury & Escrow Settlement",
+      one_liner: "Instant multi-currency ledger reconciliation, programmatic smart escrows, and automated cross-border treasury management.",
       stage: "Building",
-      year: "2025",
-      metrics: "Pre-Seed Incubation · Phase 01 Prototype",
-      founders: "Ananya P. & Techdome Studio",
-      website_url: "https://synapse.techdome.net.in",
-      image_url: "",
+      year: "2024",
+      metrics: "$12M Simulated Transaction Volume",
+      founders: "Ananya M. (FinTech Lead) & Techdome",
+      website_url: "https://tensorpay.financial",
+      image_url: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80",
       image_symbol: "cpu",
-      accent_pattern: "matrix",
-      tech_stack: ["Python", "FastAPI", "PostgreSQL", "Llama-3", "Docker"],
-      description: "Synapse Core bridges unstructured LLM reasoning with deterministic finite state machines, ensuring autonomous enterprise agents never execute hallucinated financial trades or out-of-policy medical workflows.",
+      accent_pattern: "mesh",
+      tech_stack: ["TypeScript", "Solidity", "Node.js", "Redis", "Docker"],
+      description: "TensorPay bridges traditional fiat banking rails with instant programmable escrow logic. Designed for global trade platforms, it reduces transaction reconciliation latency from 72 hours down to 4 seconds while ensuring institutional bank compliance.",
+      published: true,
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: 5,
+      name: "Aetheria Bio",
+      slug: "aetheria-bio",
+      tagline: "Generative Molecular Design & Protein Simulation",
+      one_liner: "Deep learning transformer models accelerating small-molecule candidate screening for oncology therapeutic discoveries.",
+      stage: "Building",
+      year: "2024",
+      metrics: "Pre-Seed Validation with 2 Biotech Labs",
+      founders: "Dr. Siddharth N. & Techdome AI Core",
+      website_url: "https://aetheriabio.ai",
+      image_url: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=1200&q=80",
+      image_symbol: "database",
+      accent_pattern: "dots",
+      tech_stack: ["Python", "PyTorch", "CUDA", "Next.js", "FastAPI"],
+      description: "Aetheria Bio leverages customized 3D generative diffusion models to simulate binding affinities between small molecules and target protein pockets. The platform reduces initial in-silico screening duration from months to hours.",
       published: true,
       updatedAt: new Date().toISOString()
     }
@@ -144,152 +229,181 @@ const initialSeed = {
   inquiries: [
     {
       id: 1,
-      name: "Siddharth Mehta",
-      email: "siddharth@fintechventure.com",
-      company: "Nexus Capital / Stealth FinTech",
+      name: "Rahul Verma",
+      email: "rahul@healthbridge.io",
+      company: "HealthBridge AI",
       project_type: "Venture Co-Founding",
       budget_range: "$50k - $150k",
       timeline: "Immediate (Within 30 Days)",
-      message: "We are looking for an institutional technical co-founder to build an automated wealth management platform with AI-driven tax harvesting. Interested in discussing equity co-building.",
+      message: "Looking for an institutional technical co-founder to build our clinical workflow automation platform. We have initial LOIs from 4 hospital chains in Hyderabad.",
       status: "New",
-      createdAt: new Date(Date.now() - 3600000 * 4).toISOString()
+      createdAt: new Date(Date.now() - 3600000 * 2).toISOString()
     },
     {
       id: 2,
-      name: "Rachel Dupont",
-      email: "rachel.dupont@logitech-global.io",
-      company: "Logitech Global Systems",
-      project_type: "Dedicated Engineering Pod",
-      budget_range: "$150k+",
+      name: "Jennifer Chen",
+      email: "j.chen@apexlogistics.com",
+      company: "Apex Global Freight",
+      project_type: "Enterprise AI & Cloud",
+      budget_range: "$50k - $150k",
       timeline: "1 - 3 Months",
-      message: "Need a dedicated senior engineering pod (1 Tech Lead, 3 Full-Stack Engineers) to modernize our real-time warehouse orchestration microservices.",
+      message: "Need dedicated engineering pod to build an autonomous agent pipeline for cross-border customs document verification.",
       status: "Contacted",
-      createdAt: new Date(Date.now() - 3600000 * 24).toISOString()
+      createdAt: new Date(Date.now() - 3600000 * 18).toISOString()
     }
   ]
 };
 
-// Initialize DB file if it doesn't exist
-function initDb() {
-  if (!fs.existsSync(DATA_FILE)) {
-    saveDb(initialSeed);
-  }
-}
-
+// Database persistence helpers
 function readDb() {
   try {
-    initDb();
-    const data = fs.readFileSync(DATA_FILE, 'utf8');
-    return JSON.parse(data);
+    if (!fs.existsSync(DATA_FILE)) {
+      fs.writeFileSync(DATA_FILE, JSON.stringify(initialSeed, null, 2), 'utf-8');
+      return initialSeed;
+    }
+    const raw = fs.readFileSync(DATA_FILE, 'utf-8');
+    const parsed = JSON.parse(raw);
+    if (!parsed.ventures || !parsed.globals) {
+      fs.writeFileSync(DATA_FILE, JSON.stringify(initialSeed, null, 2), 'utf-8');
+      return initialSeed;
+    }
+    if (!parsed.engagement_models) {
+      parsed.engagement_models = initialSeed.engagement_models;
+      saveDb(parsed);
+    }
+    return parsed;
   } catch (err) {
-    console.error('[CMS DB Error] Failed to read database, restoring initial seed:', err);
-    saveDb(initialSeed);
+    console.error('[CMS DB] Read error, resetting to initial seed:', err.message);
+    fs.writeFileSync(DATA_FILE, JSON.stringify(initialSeed, null, 2), 'utf-8');
     return initialSeed;
   }
 }
 
 function saveDb(data) {
   try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
     return true;
   } catch (err) {
-    console.error('[CMS DB Error] Failed to write database:', err);
+    console.error('[CMS DB] Write error:', err.message);
     return false;
   }
 }
 
-// ====================
-// GLOBALS OPERATIONS
-// ====================
+// Globals
 function getGlobals() {
   const db = readDb();
   return db.globals || initialSeed.globals;
 }
 
-function updateGlobals(updates) {
+function updateGlobals(data) {
   const db = readDb();
   db.globals = {
     ...db.globals,
-    ...updates,
+    ...data,
     updatedAt: new Date().toISOString()
   };
   saveDb(db);
   return db.globals;
 }
 
-// ====================
-// SERVICES OPERATIONS
-// ====================
+// Services
 function getServices() {
   const db = readDb();
   return db.services || initialSeed.services;
 }
 
-// ====================
-// VENTURES OPERATIONS
-// ====================
-function getVentures(includeDrafts = false) {
+function updateService(id, data) {
   const db = readDb();
-  const ventures = db.ventures || [];
-  if (includeDrafts) {
-    return ventures;
+  const services = db.services || [];
+  const index = services.findIndex(s => s.id === parseInt(id, 10));
+  if (index === -1) return null;
+  services[index] = { ...services[index], ...data };
+  db.services = services;
+  saveDb(db);
+  return services[index];
+}
+
+// Engagement Models
+function getEngagementModels() {
+  const db = readDb();
+  return db.engagement_models || initialSeed.engagement_models;
+}
+
+function updateEngagementModel(id, data) {
+  const db = readDb();
+  const models = db.engagement_models || [];
+  const index = models.findIndex(m => m.id === parseInt(id, 10));
+  if (index === -1) return null;
+  models[index] = { ...models[index], ...data };
+  db.engagement_models = models;
+  saveDb(db);
+  return models[index];
+}
+
+// Ventures
+function getVentures(stageFilter, includeDrafts = false) {
+  const db = readDb();
+  let ventures = db.ventures || [];
+  
+  if (!includeDrafts) {
+    ventures = ventures.filter(v => v.published !== false);
   }
-  return ventures.filter(v => v.published !== false);
+  
+  if (stageFilter && stageFilter !== 'All') {
+    ventures = ventures.filter(v => v.stage.toLowerCase() === stageFilter.toLowerCase());
+  }
+  
+  return ventures;
 }
 
 function getVentureById(id) {
   const db = readDb();
-  return (db.ventures || []).find(v => v.id === parseInt(id, 10));
+  const ventures = db.ventures || [];
+  return ventures.find(v => v.id === parseInt(id, 10)) || null;
 }
 
-function getVentureBySlug(slug, includeDrafts = false) {
+function getVentureBySlug(slug) {
   const db = readDb();
-  const venture = (db.ventures || []).find(v => v.slug.toLowerCase() === slug.toLowerCase());
-  if (!venture) return null;
-  if (!includeDrafts && venture.published === false) return null;
-  return venture;
+  const ventures = db.ventures || [];
+  return ventures.find(v => v.slug.toLowerCase() === slug.toLowerCase()) || null;
 }
 
 function createVenture(data) {
   const db = readDb();
   const ventures = db.ventures || [];
   
-  let slug = data.slug;
-  if (!slug) {
-    slug = (data.name || 'untitled')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+  let slug = data.slug || (data.name ? data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'untitled-venture');
+  
+  const existingSlug = ventures.some(v => v.slug === slug);
+  if (existingSlug) {
+    slug = `${slug}-${Date.now().toString().slice(-4)}`;
   }
 
-  // Ensure unique slug
-  let uniqueSlug = slug;
-  let counter = 1;
-  while (ventures.some(v => v.slug.toLowerCase() === uniqueSlug.toLowerCase())) {
-    uniqueSlug = `${slug}-${counter}`;
-    counter++;
+  let techStack = [];
+  if (Array.isArray(data.tech_stack)) {
+    techStack = data.tech_stack;
+  } else if (typeof data.tech_stack === 'string') {
+    techStack = data.tech_stack.split(',').map(s => s.trim()).filter(Boolean);
   }
-
-  const validStages = ['Building', 'Launched', 'Exited'];
-  const stage = validStages.includes(data.stage) ? data.stage : 'Building';
 
   const newVenture = {
     id: ventures.length > 0 ? Math.max(...ventures.map(v => v.id)) + 1 : 1,
     name: data.name || 'Untitled Venture',
-    slug: uniqueSlug,
-    tagline: data.tagline || '',
-    one_liner: data.one_liner || '',
-    stage: stage,
+    slug: slug,
+    tagline: data.tagline || 'Studio Incubation',
+    one_liner: data.one_liner || 'High-conviction venture incubated inside Techdome Foundry.',
+    stage: data.stage || 'Building',
     year: data.year || new Date().getFullYear().toString(),
-    metrics: data.metrics || '',
+    metrics: data.metrics || 'Pre-Seed Stage',
     founders: data.founders || 'Techdome Venture Studio',
     website_url: data.website_url || 'https://techdome.net.in',
-    image_url: data.image_url || '',
+    image_url: data.image_url || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80',
     image_symbol: data.image_symbol || 'shield',
     accent_pattern: data.accent_pattern || 'mesh',
-    tech_stack: Array.isArray(data.tech_stack) ? data.tech_stack : (data.tech_stack ? data.tech_stack.split(',').map(s => s.trim()) : ['TypeScript', 'Node.js', 'React']),
-    description: data.description || '',
-    published: data.published !== false,
+    tech_stack: techStack.length > 0 ? techStack : ['TypeScript', 'Python', 'AWS'],
+    description: data.description || 'Detailed investment thesis and production architecture engineered by Techdome.',
+    published: data.published !== undefined ? data.published : true,
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
 
@@ -304,19 +418,10 @@ function updateVenture(id, data) {
   const ventures = db.ventures || [];
   const index = ventures.findIndex(v => v.id === parseInt(id, 10));
   
-  if (index === -1) {
-    return null;
-  }
+  if (index === -1) return null;
 
   const current = ventures[index];
   
-  if (data.stage) {
-    const validStages = ['Building', 'Launched', 'Exited'];
-    if (!validStages.includes(data.stage)) {
-      data.stage = current.stage;
-    }
-  }
-
   let techStack = current.tech_stack || [];
   if (Array.isArray(data.tech_stack)) {
     techStack = data.tech_stack;
@@ -342,18 +447,14 @@ function deleteVenture(id) {
   const ventures = db.ventures || [];
   const filtered = ventures.filter(v => v.id !== parseInt(id, 10));
   
-  if (filtered.length === ventures.length) {
-    return false;
-  }
+  if (filtered.length === ventures.length) return false;
 
   db.ventures = filtered;
   saveDb(db);
   return true;
 }
 
-// ====================
-// INQUIRIES & CRM
-// ====================
+// Inquiries & CRM
 function getInquiries(statusFilter) {
   const db = readDb();
   const inquiries = db.inquiries || [];
@@ -417,7 +518,6 @@ function deleteInquiry(id) {
   return true;
 }
 
-// Reset seed
 function resetToDefault() {
   saveDb(initialSeed);
   return initialSeed;
@@ -427,6 +527,9 @@ module.exports = {
   getGlobals,
   updateGlobals,
   getServices,
+  updateService,
+  getEngagementModels,
+  updateEngagementModel,
   getVentures,
   getVentureById,
   getVentureBySlug,

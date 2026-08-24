@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const db = require('./db');
 
 const app = express();
@@ -8,7 +7,7 @@ const PORT = process.env.PORT || 1337;
 
 // Middleware
 app.use(cors({
-  origin: '*', // Allow frontend from localhost:3000, 5173, etc.
+  origin: '*', // Allow frontend from localhost:3000, 5173, Vercel, etc.
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -26,17 +25,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve Admin UI static files
-app.use('/admin', express.static(path.join(__dirname, 'public')));
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
-
-// Redirect root to /admin or API info
-app.get('/', (req, res) => {
-  res.redirect('/admin');
-});
-
 // ====================
 // REST API ENDPOINTS
 // ====================
@@ -48,7 +36,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     service: 'Techdome Headless CMS Engine',
-    version: '2.5.0',
+    version: '3.0.0',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
     records: {
@@ -99,16 +87,49 @@ app.get('/api/services', (req, res) => {
   }
 });
 
-// 4. Ventures Endpoints
+app.put('/api/services/:id', (req, res) => {
+  try {
+    const updated = db.updateService(req.params.id, req.body);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: `Service ${req.params.id} not found` });
+    }
+    res.json({ success: true, message: 'Service updated successfully', data: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 4. Engagement Models (Pricing & Partnership Structures)
+app.get('/api/engagement-models', (req, res) => {
+  try {
+    const models = db.getEngagementModels();
+    res.json({
+      success: true,
+      data: models
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.put('/api/engagement-models/:id', (req, res) => {
+  try {
+    const updated = db.updateEngagementModel(req.params.id, req.body);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: `Model ${req.params.id} not found` });
+    }
+    res.json({ success: true, message: 'Engagement model updated', data: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 5. Ventures Endpoints
 app.get('/api/ventures', (req, res) => {
   try {
     const includeDrafts = req.query.drafts === 'true';
     const stageFilter = req.query.stage;
-    let ventures = db.getVentures(includeDrafts);
-
-    if (stageFilter && stageFilter !== 'All') {
-      ventures = ventures.filter(v => v.stage.toLowerCase() === stageFilter.toLowerCase());
-    }
+    let ventures = db.getVentures(stageFilter, includeDrafts);
 
     res.json({
       success: true,
@@ -209,7 +230,7 @@ app.delete('/api/ventures/:id', (req, res) => {
   }
 });
 
-// 5. Inquiries & Client Leads Endpoints (CRM)
+// 6. Inquiries & Client Leads Endpoints (CRM)
 app.get('/api/inquiries', (req, res) => {
   try {
     const statusFilter = req.query.status;
@@ -249,7 +270,10 @@ app.put('/api/inquiries/:id', (req, res) => {
     const updated = db.updateInquiryStatus(id, status, notes);
 
     if (!updated) {
-      return res.status(404).json({ success: false, error: `Inquiry with id ${id} not found` });
+      return res.status(404).json({
+        success: false,
+        error: `Inquiry with id ${id} not found`
+      });
     }
 
     res.json({
@@ -268,7 +292,10 @@ app.delete('/api/inquiries/:id', (req, res) => {
     const success = db.deleteInquiry(id);
 
     if (!success) {
-      return res.status(404).json({ success: false, error: `Inquiry with id ${id} not found` });
+      return res.status(404).json({
+        success: false,
+        error: `Inquiry with id ${id} not found`
+      });
     }
 
     res.json({
@@ -280,25 +307,37 @@ app.delete('/api/inquiries/:id', (req, res) => {
   }
 });
 
-// 6. Reset seed endpoint
+// 7. Reset DB to seed
 app.post('/api/reset', (req, res) => {
   try {
-    const resetData = db.resetToDefault();
+    const seed = db.resetToDefault();
     res.json({
       success: true,
-      message: 'Database reset to default seed state',
-      data: resetData
+      message: 'Database content reset to default seed',
+      data: seed
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`\n======================================================`);
-  console.log(`  🚀 Techdome Headless CMS Engine Running`);
-  console.log(`  📡 REST API:    http://localhost:${PORT}/api`);
-  console.log(`  🎛️  Admin Studio: http://localhost:${PORT}/admin`);
-  console.log(`======================================================\n`);
+// Catch-all
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: `API route not found: ${req.method} ${req.originalUrl}`
+  });
 });
+
+// Export app for Vercel serverless functions
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n======================================================`);
+    console.log(`  🚀 Techdome Headless CMS Engine Running`);
+    console.log(`  📡 REST API:    http://localhost:${PORT}/api`);
+    console.log(`  🎛️  Admin Studio: http://localhost:3000/admin`);
+    console.log(`======================================================\n`);
+  });
+}

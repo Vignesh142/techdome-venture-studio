@@ -29,6 +29,18 @@ export interface StudioService {
   description: string;
   deliverables: string[];
   icon: 'rocket' | 'cpu' | 'users' | 'zap' | string;
+  highlight?: string;
+}
+
+export interface EngagementModel {
+  id: number;
+  title: string;
+  badge: string;
+  timeline?: string;
+  description: string;
+  features: string[];
+  cta: string;
+  featured?: boolean;
 }
 
 export interface ClientInquiry {

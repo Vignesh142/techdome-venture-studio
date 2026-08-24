@@ -7,8 +7,12 @@
     "dev:cms": "node cms/server.js",
     "dev:frontend": "cd frontend && npm run dev",
     "dev": "concurrently -n \"CMS,FRONTEND\" -c \"magenta,cyan\" \"npm run dev:cms\" \"npm run dev:frontend\"",
-    "build": "cd frontend && npm run build",
+    "build": "cd frontend && npm install && npm run build",
     "start": "node cms/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -1,0 +1,75 @@
+{
+  "kind": "singleType",
+  "collectionName": "globals",
+  "info": {
+    "singularName": "global-setting",
+    "pluralName": "global-settings",
+    "displayName": "Global Settings",
+    "description": "Techdome Studio Global Copy, Hero Positioning, and Business Metrics"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "studio_name": {
+      "type": "string",
+      "default": "Techdome Venture Studio"
+    },
+    "hero_eyebrow": {
+      "type": "string",
+      "default": "VENTURE STUDIO · PRODUCT ENGINEERING FOUNDRY"
+    },
+    "hero_headline": {
+      "type": "string",
+      "required": true
+    },
+    "hero_subline": {
+      "type": "text",
+      "required": true
+    },
+    "stats_clients_val": {
+      "type": "string",
+      "default": "40+"
+    },
+    "stats_clients_label": {
+      "type": "string",
+      "default": "Global Enterprise Clients"
+    },
+    "stats_delivered_val": {
+      "type": "string",
+      "default": "150+"
+    },
+    "stats_delivered_label": {
+      "type": "string",
+      "default": "Software & AI Systems Shipped"
+    },
+    "stats_capital_val": {
+      "type": "string",
+      "default": "$45M+"
+    },
+    "stats_capital_label": {
+      "type": "string",
+      "default": "Follow-on Capital Raised"
+    },
+    "stats_speed_val": {
+      "type": "string",
+      "default": "14 Days"
+    },
+    "stats_speed_label": {
+      "type": "string",
+      "default": "Rapid MVP Prototype Sprint"
+    },
+    "manifesto_headline": {
+      "type": "string"
+    },
+    "manifesto_quote": {
+      "type": "text"
+    },
+    "contact_email": {
+      "type": "email"
+    },
+    "location": {
+      "type": "string"
+    }
+  }
+}

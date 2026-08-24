@@ -1,23 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Venture, GlobalSettings } from './types';
+import { Venture, GlobalSettings, StudioService, EngagementModel } from './types';
 import { cmsClient } from './api/cmsClient';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
 import { VentureDetailPage } from './pages/VentureDetailPage';
 import { AdminPage } from './pages/AdminPage';
-import { BookingModal } from './components/BookingModal';
 
 export function App() {
   const [globals, setGlobals] = useState<GlobalSettings | null>(null);
   const [ventures, setVentures] = useState<Venture[]>([]);
+  const [services, setServices] = useState<StudioService[]>([]);
+  const [models, setModels] = useState<EngagementModel[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Booking Modal State
-  const [isBookingOpen, setIsBookingOpen] = useState<boolean>(false);
-  const [bookingService, setBookingService] = useState<string>('Venture Co-Founding');
 
   // Client router path
   const [currentPath, setCurrentPath] = useState<string>(window.location.pathname);
@@ -39,28 +35,27 @@ export function App() {
   }, []);
 
   // Fetch all CMS data
-  const loadData = useCallback(async (isManualRefresh = false) => {
-    if (isManualRefresh) {
-      setIsRefreshing(true);
-    } else {
-      setLoading(true);
-    }
+  const loadData = useCallback(async () => {
+    setLoading(true);
     setError(null);
 
     try {
-      const [globalsData, venturesData] = await Promise.all([
+      const [globalsData, venturesData, servicesData, modelsData] = await Promise.all([
         cmsClient.getGlobals(),
         cmsClient.getVentures('All'),
+        cmsClient.getServices(),
+        cmsClient.getEngagementModels(),
       ]);
       setGlobals(globalsData);
       setVentures(venturesData);
+      setServices(servicesData);
+      setModels(modelsData);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error communicating with CMS engine';
       setError(msg);
       console.error('[Techdome Frontend] CMS Fetch Error:', err);
     } finally {
       setLoading(false);
-      setIsRefreshing(false);
     }
   }, []);
 
@@ -68,10 +63,23 @@ export function App() {
     loadData();
   }, [loadData]);
 
-  const handleOpenBooking = (serviceName?: string) => {
-    if (serviceName) setBookingService(serviceName);
-    setIsBookingOpen(true);
-  };
+  const scrollToContact = useCallback(() => {
+    if (window.location.pathname !== '/') {
+      window.history.pushState({}, '', '/#contact');
+      setCurrentPath('/');
+      setTimeout(() => {
+        const el = document.getElementById('contact');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 120);
+    } else {
+      const el = document.getElementById('contact');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, []);
 
   // Route matching
   const isAdminRoute = currentPath === '/admin' || currentPath.startsWith('/admin');
@@ -83,21 +91,19 @@ export function App() {
     return (
       <AdminPage
         onBackToSite={() => navigate('/')}
-        onDataModified={() => loadData(true)}
+        onDataModified={loadData}
       />
     );
   }
 
-  // Render Crisp White Editorial Studio Public Site
+  // Render Clean Editorial Studio Public Site
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFAFA] text-black selection:bg-black selection:text-white font-sans antialiased">
-      {/* Universal Studio Header */}
+    <div className="min-h-screen flex flex-col bg-[#FAFAFA] text-[#111111] font-sans antialiased selection:bg-black selection:text-white">
+      {/* Universal Header */}
       <Header
         onNavigateHome={() => navigate('/')}
         onOpenAdmin={() => navigate('/admin')}
-        onOpenBooking={() => handleOpenBooking()}
-        onRefreshData={() => loadData(true)}
-        isRefreshing={isRefreshing}
+        onOpenBooking={scrollToContact}
       />
 
       {/* Main View Router */}
@@ -107,32 +113,27 @@ export function App() {
             slug={activeSlug}
             onBack={() => navigate('/')}
             onOpenAdmin={() => navigate('/admin')}
+            onOpenBooking={scrollToContact}
           />
         ) : (
           <HomePage
             globals={globals}
             ventures={ventures}
+            services={services}
+            models={models}
             loading={loading}
             error={error}
-            onRetry={() => loadData(true)}
+            onRetry={loadData}
             onSelectVenture={(slug) => navigate(`/ventures/${slug}`)}
             onOpenAdmin={() => navigate('/admin')}
-            onOpenBooking={handleOpenBooking}
           />
         )}
       </div>
 
-      {/* Universal Studio Footer */}
+      {/* Universal Footer */}
       <Footer
         globals={globals}
         onOpenAdmin={() => navigate('/admin')}
-      />
-
-      {/* Global Client Consultation & Booking Modal */}
-      <BookingModal
-        isOpen={isBookingOpen}
-        defaultService={bookingService}
-        onClose={() => setIsBookingOpen(false)}
       />
     </div>
   );

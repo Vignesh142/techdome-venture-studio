@@ -1,96 +1,51 @@
 @import "tailwindcss";
 
-:root {
-  /* Editorial Studio Theme — High-Contrast Black & White Duality */
-  --bg-body: #FAFAFA;
-  --bg-surface: #FFFFFF;
-  --bg-surface-elevated: #F5F5F5;
-  --bg-surface-dark: #0A0A0A;
+@layer base {
+  :root {
+    --bg-body: #FAFAFA;
+    --bg-surface: #FFFFFF;
+    --text-primary: #111111;
+    --text-secondary: #555555;
+    --border-color: #EAEAEA;
+    --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
 
-  --border-subtle: #E5E5E5;
-  --border-hover: #000000;
-  --border-dark: #262626;
+  body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-  --text-primary: #0A0A0A;
-  --text-secondary: #525252;
-  --text-muted: #737373;
-  --text-white: #FFFFFF;
-
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--text-primary);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
 }
 
-* {
-  border-color: var(--border-subtle);
-}
-
-body {
-  background-color: var(--bg-body);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-display);
-  letter-spacing: -0.03em;
-}
-
-/* Custom Clean Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #FAFAFA;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D4D4D4;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #737373;
-}
-
-/* Glass Nav */
+/* Glassmorphic Navbar */
 .studio-glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid #E5E5E5;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #ECECEC;
 }
 
-/* Editorial Card */
-.studio-card {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+/* Subtle clean card hover */
+.card-clean {
+  background-color: #FFFFFF;
+  border: 1px solid #EAEAEA;
+  border-radius: 1.25rem;
+  transition: all 0.2s ease-in-out;
 }
-
-.studio-card:hover {
-  border-color: #000000;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.08);
-}
-
-/* Editorial Section Eyebrow */
-.eyebrow-badge {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #737373;
+.card-clean:hover {
+  border-color: #CCCCCC;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.05);
 }

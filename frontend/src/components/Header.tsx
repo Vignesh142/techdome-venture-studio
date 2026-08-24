@@ -1,48 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { cmsClient } from '../api/cmsClient';
-import { RefreshCw, LayoutDashboard, Calendar, Menu, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { LayoutDashboard, Calendar, Menu, X, ArrowUpRight } from 'lucide-react';
 
 interface HeaderProps {
   onNavigateHome: () => void;
   onOpenAdmin: () => void;
   onOpenBooking: () => void;
-  onRefreshData?: () => void;
-  isRefreshing?: boolean;
-  isAdminView?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onNavigateHome,
   onOpenAdmin,
   onOpenBooking,
-  onRefreshData,
-  isRefreshing = false,
-  isAdminView = false,
 }) => {
-  const [cmsOnline, setCmsOnline] = useState<boolean | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    let isMounted = true;
-    const checkCms = async () => {
-      try {
-        await cmsClient.checkHealth();
-        if (isMounted) setCmsOnline(true);
-      } catch {
-        if (isMounted) setCmsOnline(false);
-      }
-    };
-    checkCms();
-    const interval = setInterval(checkCms, 10000);
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, []);
-
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-xl border-b border-neutral-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-40 w-full studio-glass">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-18 sm:h-20 flex items-center justify-between">
         {/* Official Brand Logo Wordmark */}
         <div 
           onClick={onNavigateHome}
@@ -53,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({
           <img
             src="/techdome.png"
             alt="Techdome"
-            className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            className="h-7 sm:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
           <span className="hidden sm:inline-block font-mono text-[10px] text-neutral-400 uppercase tracking-widest pl-3 border-l border-neutral-300 font-semibold">
             Venture Studio
@@ -61,50 +35,15 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 text-xs font-mono text-neutral-600 font-medium">
-          <a href="#services" className="hover:text-black transition-colors">Services</a>
-          <a href="#portfolio" className="hover:text-black transition-colors">Ventures</a>
-          <a href="#engagement" className="hover:text-black transition-colors">Engagement</a>
+        <nav className="hidden md:flex items-center gap-8 text-xs font-mono text-neutral-600 font-medium">
+          <a href="#services" className="hover:text-black transition-colors">Practice Areas</a>
+          <a href="#portfolio" className="hover:text-black transition-colors">Ventures & Portfolio</a>
+          <a href="#engagement" className="hover:text-black transition-colors">Engagement Models</a>
           <a href="#pipeline" className="hover:text-black transition-colors">Pipeline</a>
         </nav>
 
         {/* Right Action CTAs */}
         <div className="hidden sm:flex items-center gap-3">
-          {/* Live CMS Status Indicator */}
-          <div 
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono border transition-colors ${
-              cmsOnline === true 
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' 
-                : cmsOnline === false 
-                ? 'bg-red-50 text-red-700 border-red-200' 
-                : 'bg-neutral-100 text-neutral-600 border-neutral-200'
-            }`}
-            title={cmsOnline ? "CMS Server connected on localhost:1337" : "CMS Server offline"}
-          >
-            <span className={`w-2 h-2 rounded-full ${
-              cmsOnline === true 
-                ? 'bg-emerald-500 animate-pulse' 
-                : cmsOnline === false 
-                ? 'bg-red-500' 
-                : 'bg-neutral-400'
-            }`} />
-            <span className="tracking-tight font-medium text-[11px]">
-              {cmsOnline === true ? 'CMS LIVE' : 'CMS OFFLINE'}
-            </span>
-          </div>
-
-          {/* Sync Button */}
-          {onRefreshData && !isAdminView && (
-            <button
-              onClick={onRefreshData}
-              disabled={isRefreshing}
-              className="p-2 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-neutral-700 hover:text-black transition-all text-xs font-mono shadow-2xs"
-              title="Sync CMS Data"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-black' : ''}`} />
-            </button>
-          )}
-
           {/* CMS Admin Studio Button */}
           <button
             onClick={onOpenAdmin}
@@ -120,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-semibold font-mono transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span>Book a Call</span>
+            <span>Schedule Discovery Call</span>
           </button>
         </div>
 
@@ -148,30 +87,34 @@ export const Header: React.FC<HeaderProps> = ({
             <a 
               href="#services" 
               onClick={() => setMobileMenuOpen(false)}
-              className="text-neutral-700 hover:text-black py-1"
+              className="text-neutral-700 hover:text-black py-1 flex items-center justify-between"
             >
-              Services & Capabilities
+              <span>Practice Areas</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400" />
             </a>
             <a 
               href="#portfolio" 
               onClick={() => setMobileMenuOpen(false)}
-              className="text-neutral-700 hover:text-black py-1"
+              className="text-neutral-700 hover:text-black py-1 flex items-center justify-between"
             >
-              Ventures Portfolio
+              <span>Ventures & Portfolio</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400" />
             </a>
             <a 
               href="#engagement" 
               onClick={() => setMobileMenuOpen(false)}
-              className="text-neutral-700 hover:text-black py-1"
+              className="text-neutral-700 hover:text-black py-1 flex items-center justify-between"
             >
-              Engagement Models
+              <span>Engagement Models</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400" />
             </a>
             <a 
               href="#pipeline" 
               onClick={() => setMobileMenuOpen(false)}
-              className="text-neutral-700 hover:text-black py-1"
+              className="text-neutral-700 hover:text-black py-1 flex items-center justify-between"
             >
-              Stage Tracker
+              <span>Stage Tracker</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400" />
             </a>
           </nav>
 

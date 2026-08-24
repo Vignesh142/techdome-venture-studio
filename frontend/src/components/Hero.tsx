@@ -5,51 +5,50 @@ import { ArrowRight, Calendar, Sparkles, Building2, Code2, TrendingUp, Zap } fro
 interface HeroProps {
   globals: GlobalSettings | null;
   loading: boolean;
-  onOpenBooking: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ globals, loading, onOpenBooking }) => {
+export const Hero: React.FC<HeroProps> = ({ globals }) => {
   return (
-    <section className="relative pt-8 sm:pt-14 pb-12 sm:pb-16 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 w-full">
+    <section className="relative pt-6 sm:pt-12 pb-10 sm:pb-14 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 w-full">
       {/* Top Tagline / Eyebrow */}
-      <div className="flex items-center gap-2 mb-6">
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-black text-[11px] font-mono font-semibold uppercase tracking-widest">
-          <Sparkles className="w-3.5 h-3.5" />
+      <div className="flex items-center gap-2 mb-5">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-800 text-[11px] font-mono font-semibold uppercase tracking-wider">
+          <Sparkles className="w-3.5 h-3.5 text-black" />
           <span>{globals?.hero_eyebrow || 'VENTURE STUDIO · PRODUCT ENGINEERING FOUNDRY'}</span>
         </span>
       </div>
 
       {/* Main Display Headline */}
-      <div className="max-w-5xl space-y-6">
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-display text-black tracking-tight leading-[1.15]">
+      <div className="max-w-4xl space-y-5">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-display text-black tracking-tight leading-[1.2]">
           {globals?.hero_headline || 'We Co-Found & Engineer High-Conviction Software Ventures.'}
         </h1>
 
-        <p className="text-sm sm:text-lg text-neutral-600 font-normal leading-relaxed max-w-3xl">
+        <p className="text-sm sm:text-base text-neutral-600 font-normal leading-relaxed max-w-2xl">
           {globals?.hero_subline || 'Techdome acts as your institutional technical co-founder — deploying capital, modern AI architecture, and dedicated engineering pods to launch generation-defining software companies from Day 0.'}
         </p>
 
-        {/* Action CTAs: Dual Conversion Funnel */}
-        <div className="pt-3 flex flex-wrap items-center gap-3 sm:gap-4">
-          <button
-            onClick={onOpenBooking}
-            className="inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 rounded-2xl bg-black hover:bg-neutral-800 text-white text-xs font-mono font-bold transition-all shadow-md hover:scale-[1.02] active:scale-[0.98]"
+        {/* Action CTAs: Direct Page Navigation */}
+        <div className="pt-2 flex flex-wrap items-center gap-3">
+          <a
+            href="#contact"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-mono font-semibold transition-all shadow-sm hover:scale-[1.01] active:scale-[0.98]"
           >
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-3.5 h-3.5" />
             <span>Schedule Discovery Call</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </a>
 
           <a
             href="#services"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white hover:bg-neutral-100 border border-neutral-200 text-black text-xs font-mono font-semibold transition-all shadow-2xs"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-black text-xs font-mono font-medium transition-all shadow-2xs"
           >
-            <span>Explore Services</span>
+            <span>Explore Practice Areas</span>
           </a>
 
           <a
             href="#portfolio"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white hover:bg-neutral-100 border border-neutral-200 text-black text-xs font-mono font-semibold transition-all shadow-2xs"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-neutral-100 border border-neutral-200 text-black text-xs font-mono font-medium transition-all shadow-2xs"
           >
             <span>View Portfolio</span>
           </a>
@@ -57,56 +56,56 @@ export const Hero: React.FC<HeroProps> = ({ globals, loading, onOpenBooking }) =
       </div>
 
       {/* 4 Realistic Studio Impact Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-12 sm:mt-16 pt-8 border-t border-neutral-200">
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-shadow">
-          <div className="flex items-center gap-2 mb-2 text-neutral-400">
-            <Building2 className="w-4 h-4 text-black" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-10 sm:mt-12 pt-8 border-t border-neutral-200">
+        <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-2xs">
+          <div className="flex items-center gap-1.5 mb-1.5 text-neutral-400">
+            <Building2 className="w-3.5 h-3.5 text-black" />
             <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Global Reach</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-display text-black mb-0.5">
+          <div className="text-xl sm:text-2xl font-bold font-display text-black mb-0.5">
             {globals?.stats_clients_val || '40+'}
           </div>
-          <div className="text-xs text-neutral-500 font-medium">
+          <div className="text-[11px] text-neutral-500 font-medium truncate">
             {globals?.stats_clients_label || 'Global Enterprise Clients'}
           </div>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-shadow">
-          <div className="flex items-center gap-2 mb-2 text-neutral-400">
-            <Code2 className="w-4 h-4 text-black" />
-            <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Delivery Track Record</span>
+        <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-2xs">
+          <div className="flex items-center gap-1.5 mb-1.5 text-neutral-400">
+            <Code2 className="w-3.5 h-3.5 text-black" />
+            <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Track Record</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-display text-black mb-0.5">
+          <div className="text-xl sm:text-2xl font-bold font-display text-black mb-0.5">
             {globals?.stats_delivered_val || '150+'}
           </div>
-          <div className="text-xs text-neutral-500 font-medium">
-            {globals?.stats_delivered_label || 'Software & AI Systems Shipped'}
+          <div className="text-[11px] text-neutral-500 font-medium truncate">
+            {globals?.stats_delivered_label || 'Software & AI Shipped'}
           </div>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-shadow">
-          <div className="flex items-center gap-2 mb-2 text-neutral-400">
-            <TrendingUp className="w-4 h-4 text-black" />
-            <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Capital Acceleration</span>
+        <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-2xs">
+          <div className="flex items-center gap-1.5 mb-1.5 text-neutral-400">
+            <TrendingUp className="w-3.5 h-3.5 text-black" />
+            <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Capital Secured</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-display text-black mb-0.5">
+          <div className="text-xl sm:text-2xl font-bold font-display text-black mb-0.5">
             {globals?.stats_capital_val || '$45M+'}
           </div>
-          <div className="text-xs text-neutral-500 font-medium">
+          <div className="text-[11px] text-neutral-500 font-medium truncate">
             {globals?.stats_capital_label || 'Follow-on Capital Raised'}
           </div>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-shadow">
-          <div className="flex items-center gap-2 mb-2 text-neutral-400">
-            <Zap className="w-4 h-4 text-black" />
-            <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Velocity Foundry</span>
+        <div className="bg-white p-4 rounded-2xl border border-neutral-200 shadow-2xs">
+          <div className="flex items-center gap-1.5 mb-1.5 text-neutral-400">
+            <Zap className="w-3.5 h-3.5 text-black" />
+            <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Foundry Speed</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-display text-black mb-0.5">
+          <div className="text-xl sm:text-2xl font-bold font-display text-black mb-0.5">
             {globals?.stats_speed_val || '14 Days'}
           </div>
-          <div className="text-xs text-neutral-500 font-medium">
-            {globals?.stats_speed_label || 'Rapid MVP Prototype Sprint'}
+          <div className="text-[11px] text-neutral-500 font-medium truncate">
+            {globals?.stats_speed_label || 'Rapid Prototype Sprint'}
           </div>
         </div>
       </div>
