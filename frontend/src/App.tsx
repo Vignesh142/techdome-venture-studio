@@ -6,6 +6,7 @@ import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
 import { VentureDetailPage } from './pages/VentureDetailPage';
 import { AdminPage } from './pages/AdminPage';
+import { BookingModal } from './components/BookingModal';
 
 export function App() {
   const [globals, setGlobals] = useState<GlobalSettings | null>(null);
@@ -13,6 +14,10 @@ export function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Booking Modal State
+  const [isBookingOpen, setIsBookingOpen] = useState<boolean>(false);
+  const [bookingService, setBookingService] = useState<string>('Venture Co-Founding');
 
   // Client router path
   const [currentPath, setCurrentPath] = useState<string>(window.location.pathname);
@@ -63,6 +68,11 @@ export function App() {
     loadData();
   }, [loadData]);
 
+  const handleOpenBooking = (serviceName?: string) => {
+    if (serviceName) setBookingService(serviceName);
+    setIsBookingOpen(true);
+  };
+
   // Route matching
   const isAdminRoute = currentPath === '/admin' || currentPath.startsWith('/admin');
   const matchVentureDetail = currentPath.match(/^\/ventures\/([^/]+)/);
@@ -85,6 +95,7 @@ export function App() {
       <Header
         onNavigateHome={() => navigate('/')}
         onOpenAdmin={() => navigate('/admin')}
+        onOpenBooking={() => handleOpenBooking()}
         onRefreshData={() => loadData(true)}
         isRefreshing={isRefreshing}
       />
@@ -106,6 +117,7 @@ export function App() {
             onRetry={() => loadData(true)}
             onSelectVenture={(slug) => navigate(`/ventures/${slug}`)}
             onOpenAdmin={() => navigate('/admin')}
+            onOpenBooking={handleOpenBooking}
           />
         )}
       </div>
@@ -114,6 +126,13 @@ export function App() {
       <Footer
         globals={globals}
         onOpenAdmin={() => navigate('/admin')}
+      />
+
+      {/* Global Client Consultation & Booking Modal */}
+      <BookingModal
+        isOpen={isBookingOpen}
+        defaultService={bookingService}
+        onClose={() => setIsBookingOpen(false)}
       />
     </div>
   );

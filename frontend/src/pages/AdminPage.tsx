@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Venture, GlobalSettings, VentureStage } from '../types';
+import { Venture, GlobalSettings, ClientInquiry, VentureStage } from '../types';
 import { cmsClient } from '../api/cmsClient';
 import {
   Layers,
@@ -33,9 +33,14 @@ import {
   Sparkles,
   Loader2,
   Image as ImageIcon,
-  Lock,
   LogOut,
-  KeyRound
+  KeyRound,
+  Inbox,
+  Mail,
+  Building2,
+  DollarSign,
+  Clock,
+  MessageSquare
 } from 'lucide-react';
 
 interface AdminPageProps {
@@ -56,12 +61,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
   // Studio Dashboard states
-  const [activeTab, setActiveTab] = useState<'ventures' | 'globals' | 'api'>('ventures');
+  const [activeTab, setActiveTab] = useState<'ventures' | 'inquiries' | 'globals' | 'api'>('ventures');
   const [ventures, setVentures] = useState<Venture[]>([]);
+  const [inquiries, setInquiries] = useState<ClientInquiry[]>([]);
   const [globals, setGlobals] = useState<GlobalSettings | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedStage, setSelectedStage] = useState<string>('All');
+  const [selectedInquiryStatus, setSelectedInquiryStatus] = useState<string>('All');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [copiedEndpoint, setCopiedEndpoint] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -114,13 +121,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
   const loadAllData = async () => {
     setLoading(true);
     try {
-      const [venturesData, globalsData] = await Promise.all([
+      const [venturesData, globalsData, inquiriesData] = await Promise.all([
         cmsClient.getVentures('All', true),
         cmsClient.getGlobals(),
+        cmsClient.getInquiries(),
       ]);
       setVentures(venturesData);
       setGlobals(globalsData);
       setGlobalsForm(globalsData);
+      setInquiries(inquiriesData);
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Failed to load CMS data', 'error');
     } finally {
@@ -150,9 +159,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
         metrics: '',
         founders: 'Techdome Venture Studio',
         website_url: 'https://techdome.net.in',
-        image_url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80',
+        image_url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80',
         image_symbol: 'shield',
         accent_pattern: 'mesh',
+        tech_stack: ['TypeScript', 'Python', 'AWS'],
         description: '',
         published: true,
       });
@@ -225,6 +235,28 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
     }
   };
 
+  const handleUpdateInquiryStatus = async (id: number, newStatus: string) => {
+    try {
+      await cmsClient.updateInquiry(id, { status: newStatus });
+      setInquiries(prev => prev.map(i => i.id === id ? { ...i, status: newStatus } : i));
+      showToast(`Lead status updated to ${newStatus}`);
+    } catch {
+      showToast('Failed to update lead status', 'error');
+    }
+  };
+
+  const handleDeleteInquiry = async (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm('Delete this client inquiry record?')) return;
+    try {
+      await cmsClient.deleteInquiry(id);
+      setInquiries(prev => prev.filter(i => i.id !== id));
+      showToast('Inquiry record deleted');
+    } catch {
+      showToast('Failed to delete inquiry', 'error');
+    }
+  };
+
   const handleSaveGlobals = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingGlobals(true);
@@ -259,11 +291,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
     showToast('Copied endpoint URL to clipboard');
   };
 
-  // IF NOT AUTHENTICATED: SHOW SLEEK LOGIN SCREEN WITH LOGO
+  // IF NOT AUTHENTICATED: SHOW SLEEK LOGIN SCREEN
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen w-full bg-[#FAFAFA] flex flex-col justify-between p-6 sm:p-10 font-sans text-black relative overflow-hidden selection:bg-black selection:text-white">
-        {/* Background Architectural Grid */}
         <div 
           className="absolute inset-0 opacity-[0.035] pointer-events-none"
           style={{
@@ -301,10 +332,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                 className="h-10 w-auto object-contain mb-3"
               />
               <span className="font-mono text-[11px] text-neutral-400 uppercase tracking-wider font-semibold">
-                CMS Studio Panel
+                Studio CMS Engine
               </span>
               <p className="text-xs text-neutral-500 font-mono mt-2 max-w-xs leading-relaxed">
-                Institutional Content Management System. Enter access key to proceed.
+                Institutional Content Management & Lead CRM. Enter access key to proceed.
               </p>
             </div>
 
@@ -379,11 +410,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
   }
 
   const stats = {
-    total: ventures.length,
-    launched: ventures.filter(v => v.stage === 'Launched').length,
-    building: ventures.filter(v => v.stage === 'Building').length,
-    exited: ventures.filter(v => v.stage === 'Exited').length,
-    published: ventures.filter(v => v.published !== false).length,
+    totalVentures: ventures.length,
+    inquiriesTotal: inquiries.length,
+    inquiriesNew: inquiries.filter(i => i.status === 'New').length,
+    publishedVentures: ventures.filter(v => v.published !== false).length,
   };
 
   const filteredVentures = ventures.filter((v) => {
@@ -393,6 +423,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
       v.slug.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStage = selectedStage === 'All' || v.stage === selectedStage;
     return matchesSearch && matchesStage;
+  });
+
+  const filteredInquiries = inquiries.filter((i) => {
+    const matchesSearch =
+      i.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      i.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      i.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      i.project_type.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = selectedInquiryStatus === 'All' || i.status.toLowerCase() === selectedInquiryStatus.toLowerCase();
+    return matchesSearch && matchesStatus;
   });
 
   return (
@@ -417,20 +457,22 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
         </div>
       )}
 
-      {/* MOBILE TOP BAR WITH LOGO */}
+      {/* MOBILE TOP BAR */}
       <div className="md:hidden bg-white border-b border-neutral-200 px-4 py-3.5 flex items-center justify-between z-30 shrink-0">
         <div className="flex items-center gap-2.5">
           <img src="/techdome.png" alt="Techdome" className="h-7 w-auto object-contain" />
           <span className="font-mono text-[10px] text-neutral-400 uppercase tracking-widest pl-2 border-l border-neutral-300 font-semibold">CMS</span>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => handleOpenModal()}
-            className="p-2 rounded-lg bg-black text-white text-xs"
-            title="Add Venture"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
+          {activeTab === 'ventures' && (
+            <button
+              onClick={() => handleOpenModal()}
+              className="p-2 rounded-lg bg-black text-white text-xs"
+              title="Add Venture"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          )}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-lg border border-neutral-200 text-black"
@@ -440,14 +482,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
         </div>
       </div>
 
-      {/* FULL-HEIGHT LEFT SIDEBAR WITH OFFICIAL LOGO (No duplicated text) */}
+      {/* FULL-HEIGHT LEFT SIDEBAR */}
       <aside
         className={`w-72 shrink-0 bg-white border-r border-neutral-200 flex flex-col justify-between p-6 z-40 transition-transform duration-300 ease-out absolute md:static inset-y-0 left-0 ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         <div>
-          {/* Official Brand Logo */}
+          {/* Brand Wordmark */}
           <div className="flex items-center justify-between pb-6 border-b border-neutral-100 mb-6">
             <div className="flex items-center gap-3">
               <img
@@ -474,6 +516,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
               Management
             </div>
 
+            {/* TAB 1: Ventures Model */}
             <button
               onClick={() => {
                 setActiveTab('ventures');
@@ -498,6 +541,36 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
               </span>
             </button>
 
+            {/* TAB 2: Inquiries & Leads CRM */}
+            <button
+              onClick={() => {
+                setActiveTab('inquiries');
+                setMobileMenuOpen(false);
+              }}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-medium transition-all duration-200 ${
+                activeTab === 'inquiries'
+                  ? 'bg-black text-white font-semibold shadow-xs'
+                  : 'text-neutral-600 hover:text-black hover:bg-neutral-100'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Inbox className="w-4 h-4" />
+                <span>Client Inquiries CRM</span>
+              </div>
+              {stats.inquiriesNew > 0 ? (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500 text-white font-bold animate-pulse">
+                  {stats.inquiriesNew} New
+                </span>
+              ) : (
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                  activeTab === 'inquiries' ? 'bg-neutral-800 text-white' : 'bg-neutral-100 text-neutral-700'
+                }`}>
+                  {inquiries.length}
+                </span>
+              )}
+            </button>
+
+            {/* TAB 3: Global Settings */}
             <button
               onClick={() => {
                 setActiveTab('globals');
@@ -516,6 +589,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
               <span className="text-[10px] font-mono font-semibold">CMS</span>
             </button>
 
+            {/* TAB 4: REST Endpoints */}
             <button
               onClick={() => {
                 setActiveTab('api');
@@ -567,11 +641,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
           <div>
             <h1 className="font-display font-bold text-xl sm:text-2xl text-black">
               {activeTab === 'ventures' && 'Portfolio Ventures'}
+              {activeTab === 'inquiries' && 'Client Consultation Inquiries (CRM)'}
               {activeTab === 'globals' && 'Global Studio Settings'}
               {activeTab === 'api' && 'REST API Documentation'}
             </h1>
             <p className="text-xs text-neutral-500 font-mono mt-0.5">
               {activeTab === 'ventures' && 'Manage all ventures, stages, metrics, and content models'}
+              {activeTab === 'inquiries' && 'Incoming discovery meeting requests, venture pitches, and enterprise leads'}
               {activeTab === 'globals' && 'Edit hero headline, subline, metrics, and manifesto statements'}
               {activeTab === 'api' && 'Real-time JSON endpoints served from the local backend'}
             </p>
@@ -597,6 +673,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
               </button>
             )}
 
+            {activeTab === 'inquiries' && (
+              <button
+                onClick={loadAllData}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-neutral-200 hover:bg-neutral-100 text-black text-xs font-mono font-semibold transition-all"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Refresh Leads</span>
+              </button>
+            )}
+
             {activeTab === 'globals' && (
               <button
                 onClick={handleSaveGlobals}
@@ -614,50 +700,50 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
           </div>
         </header>
 
-        {/* Scrollable Content Body with Subtle Fade-In */}
+        {/* Scrollable Content Body */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-8 lg:p-10 space-y-8 animate-in fade-in duration-300">
           {/* TAB 1: VENTURES */}
           {activeTab === 'ventures' && (
             <div className="space-y-6 max-w-7xl">
               {/* Top Metric Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-shadow">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs">
                   <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider block mb-1">
                     Total Portfolio
                   </span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-3xl font-bold font-display text-black">{stats.total}</span>
+                    <span className="text-2xl sm:text-3xl font-bold font-display text-black">{ventures.length}</span>
                     <span className="text-xs text-neutral-500 font-mono">Ventures</span>
                   </div>
                 </div>
 
-                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-shadow">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs">
                   <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider block mb-1">
                     Launched
                   </span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-3xl font-bold font-display text-black">{stats.launched}</span>
+                    <span className="text-2xl sm:text-3xl font-bold font-display text-black">{ventures.filter(v => v.stage === 'Launched').length}</span>
                     <span className="text-xs text-neutral-600 font-mono">Active</span>
                   </div>
                 </div>
 
-                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-shadow">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs">
                   <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider block mb-1">
                     Building
                   </span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-3xl font-bold font-display text-black">{stats.building}</span>
+                    <span className="text-2xl sm:text-3xl font-bold font-display text-black">{ventures.filter(v => v.stage === 'Building').length}</span>
                     <span className="text-xs text-neutral-600 font-mono">Incubation</span>
                   </div>
                 </div>
 
-                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-shadow">
+                <div className="bg-white p-4 sm:p-5 rounded-2xl border border-neutral-200 shadow-2xs">
                   <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider block mb-1">
-                    Exited
+                    Published Live
                   </span>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-3xl font-bold font-display text-black">{stats.exited}</span>
-                    <span className="text-xs text-neutral-600 font-mono">Acquired</span>
+                    <span className="text-2xl sm:text-3xl font-bold font-display text-black">{stats.publishedVentures}</span>
+                    <span className="text-xs text-neutral-600 font-mono">Public</span>
                   </div>
                 </div>
               </div>
@@ -676,7 +762,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                 </div>
 
                 <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                  {/* Stage filter pills */}
                   <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-xl">
                     {['All', 'Launched', 'Building', 'Exited'].map((stg) => (
                       <button
@@ -698,7 +783,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                   <button
                     onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
                     className="p-2 rounded-xl border border-neutral-200 hover:bg-neutral-50 text-black text-xs font-mono flex items-center gap-1.5 transition-colors"
-                    title="Toggle List / Grid view"
                   >
                     <SlidersHorizontal className="w-3.5 h-3.5" />
                     <span>{viewMode === 'list' ? 'Grid' : 'List'}</span>
@@ -710,11 +794,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
               {loading ? (
                 <div className="py-24 text-center text-neutral-400 font-mono text-xs bg-white rounded-2xl border border-neutral-200">
                   <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-3 text-black" />
-                  Loading portfolio records from database...
+                  Loading portfolio records...
                 </div>
               ) : filteredVentures.length === 0 ? (
                 <div className="py-20 text-center bg-white rounded-2xl border border-neutral-200 text-neutral-500 text-xs font-mono">
-                  No ventures match "{searchQuery}" in stage "{selectedStage}".
+                  No ventures match search criteria.
                 </div>
               ) : viewMode === 'list' ? (
                 <div className="bg-white rounded-2xl border border-neutral-200 shadow-2xs overflow-hidden divide-y divide-neutral-100">
@@ -725,8 +809,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                       className="p-5 sm:p-6 hover:bg-neutral-50/80 transition-all duration-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer group"
                     >
                       <div className="flex items-start sm:items-center gap-4 min-w-0">
-                        {/* Square Emblem / Image Thumbnail */}
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-black text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform duration-300 mt-0.5 sm:mt-0">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-black text-white flex items-center justify-center shrink-0 shadow-2xs mt-0.5 sm:mt-0">
                           {v.image_url ? (
                             <img src={v.image_url} alt={v.name} className="w-full h-full object-cover" />
                           ) : v.image_symbol === 'shield' ? (
@@ -744,7 +827,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                           )}
                         </div>
 
-                        {/* NAME BIG & SLUG SMALLER BELOW */}
                         <div className="min-w-0">
                           <div className="flex items-center gap-3 mb-1">
                             <h3 className="font-display font-bold text-lg sm:text-xl text-black tracking-tight truncate group-hover:text-neutral-700 transition-colors">
@@ -763,7 +845,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                             </span>
                           </div>
 
-                          {/* Slug Smaller Below */}
                           <div className="flex items-center gap-2 mb-1.5">
                             <span className="font-mono text-xs text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded">
                               /ventures/{v.slug}
@@ -781,14 +862,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                         </div>
                       </div>
 
-                      {/* Right Meta & Actions */}
                       <div className="flex items-center gap-4 shrink-0 self-end sm:self-center">
                         <div className="text-right hidden md:block">
                           <div className="text-xs font-semibold text-black font-mono">{v.metrics || 'Pre-Seed'}</div>
                           <div className="text-[11px] text-neutral-400 font-mono">Est. {v.year || '2024'}</div>
                         </div>
 
-                        {/* Status Toggle */}
                         <button
                           onClick={(e) => handleTogglePublish(v, e)}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 active:scale-95 ${
@@ -796,7 +875,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                               ? 'bg-black text-white hover:bg-neutral-800'
                               : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
                           }`}
-                          title="Click to toggle publish status"
                         >
                           {v.published !== false ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                           <span>{v.published !== false ? 'Live' : 'Draft'}</span>
@@ -807,16 +885,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                             e.stopPropagation();
                             handleOpenModal(v);
                           }}
-                          className="p-2 rounded-lg border border-neutral-200 hover:bg-neutral-100 text-black text-xs font-mono transition-colors active:scale-95"
-                          title="Edit venture"
+                          className="p-2 rounded-lg border border-neutral-200 hover:bg-neutral-100 text-black text-xs font-mono transition-colors"
                         >
                           <Edit3 className="w-4 h-4" />
                         </button>
 
                         <button
                           onClick={(e) => handleDeleteVenture(v.id, v.name, e)}
-                          className="p-2 rounded-lg hover:bg-red-50 text-neutral-400 hover:text-red-600 transition-colors active:scale-95"
-                          title="Delete venture"
+                          className="p-2 rounded-lg hover:bg-red-50 text-neutral-400 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -837,20 +913,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                     >
                       <div>
                         <div className="flex items-center justify-between mb-3">
-                          <span
-                            className={`text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-full ${
-                              v.stage === 'Launched'
-                                ? 'bg-black text-white'
-                                : v.stage === 'Building'
-                                ? 'bg-neutral-100 text-black border border-neutral-300'
-                                : 'bg-transparent text-neutral-500 border border-neutral-300 border-dashed'
-                            }`}
-                          >
+                          <span className="text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-full bg-black text-white">
                             {v.stage}
                           </span>
                           <span className="text-xs font-mono text-neutral-400">/{v.slug}</span>
                         </div>
-
                         <h3 className="font-bold font-display text-black text-xl mb-1">{v.name}</h3>
                         <div className="text-xs font-mono text-neutral-400 mb-3">/ventures/{v.slug}</div>
                         <p className="text-xs text-neutral-600 line-clamp-2 mb-6 leading-relaxed font-normal">{v.one_liner}</p>
@@ -877,13 +944,157 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
             </div>
           )}
 
-          {/* TAB 2: GLOBALS SETTINGS */}
+          {/* TAB 2: CLIENT INQUIRIES CRM */}
+          {activeTab === 'inquiries' && (
+            <div className="space-y-6 max-w-7xl">
+              {/* Inquiries Header & Controls */}
+              <div className="bg-white p-5 rounded-2xl border border-neutral-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="relative w-full sm:w-96">
+                  <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by client name, email, company..."
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-neutral-50 border border-neutral-200 text-xs font-sans text-black focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition-all"
+                  />
+                </div>
+
+                <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-xl w-full sm:w-auto overflow-x-auto">
+                  {['All', 'New', 'Contacted', 'In Review', 'Closed'].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setSelectedInquiryStatus(status)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 whitespace-nowrap ${
+                        selectedInquiryStatus === status
+                          ? 'bg-black text-white font-semibold shadow-xs'
+                          : 'text-neutral-600 hover:text-black'
+                      }`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Inquiries List */}
+              {filteredInquiries.length === 0 ? (
+                <div className="py-20 text-center bg-white rounded-2xl border border-neutral-200 text-neutral-500 text-xs font-mono">
+                  No client consultation requests found.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredInquiries.map((inquiry) => (
+                    <div
+                      key={inquiry.id}
+                      className="bg-white p-6 rounded-2xl border border-neutral-200 shadow-2xs hover:shadow-xs transition-all flex flex-col space-y-4"
+                    >
+                      {/* Top Meta */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-neutral-100">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-neutral-100 text-black flex items-center justify-center font-bold text-xs font-display">
+                            {inquiry.name.substring(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-bold font-display text-base text-black">{inquiry.name}</h3>
+                              <span className={`text-[10px] font-mono font-semibold uppercase px-2.5 py-0.5 rounded-full ${
+                                inquiry.status === 'New'
+                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                  : inquiry.status === 'Contacted'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : inquiry.status === 'In Review'
+                                  ? 'bg-amber-100 text-amber-800'
+                                  : 'bg-neutral-100 text-neutral-600'
+                              }`}>
+                                {inquiry.status}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs font-mono text-neutral-500 mt-0.5">
+                              <span className="flex items-center gap-1">
+                                <Mail className="w-3 h-3 text-neutral-400" />
+                                {inquiry.email}
+                              </span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <Building2 className="w-3 h-3 text-neutral-400" />
+                                {inquiry.company}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Status Change Selector & Delete */}
+                        <div className="flex items-center gap-2 self-end sm:self-center">
+                          <span className="text-[11px] font-mono text-neutral-400">Status:</span>
+                          <select
+                            value={inquiry.status}
+                            onChange={(e) => handleUpdateInquiryStatus(inquiry.id, e.target.value)}
+                            className="px-3 py-1.5 rounded-lg border border-neutral-200 text-xs font-mono text-black bg-white focus:ring-1 focus:ring-black"
+                          >
+                            <option value="New">New</option>
+                            <option value="Contacted">Contacted</option>
+                            <option value="In Review">In Review</option>
+                            <option value="Closed">Closed</option>
+                          </select>
+
+                          <button
+                            onClick={(e) => handleDeleteInquiry(inquiry.id, e)}
+                            className="p-1.5 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                            title="Delete inquiry"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Inquiry Details Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono bg-neutral-50 p-3.5 rounded-xl border border-neutral-100">
+                        <div>
+                          <span className="text-neutral-400 block text-[10px] uppercase mb-0.5">Engagement Model</span>
+                          <span className="font-semibold text-black">{inquiry.project_type}</span>
+                        </div>
+                        <div>
+                          <span className="text-neutral-400 block text-[10px] uppercase mb-0.5 flex items-center gap-1">
+                            <DollarSign className="w-3 h-3" />
+                            Budget Tier
+                          </span>
+                          <span className="font-semibold text-black">{inquiry.budget_range}</span>
+                        </div>
+                        <div>
+                          <span className="text-neutral-400 block text-[10px] uppercase mb-0.5 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            Target Timeline
+                          </span>
+                          <span className="font-semibold text-black">{inquiry.timeline}</span>
+                        </div>
+                      </div>
+
+                      {/* Client Project Scope / Message */}
+                      {inquiry.message && (
+                        <div className="text-xs text-neutral-700 font-normal leading-relaxed bg-white p-3.5 rounded-xl border border-neutral-100 flex items-start gap-2.5">
+                          <MessageSquare className="w-4 h-4 text-neutral-400 shrink-0 mt-0.5" />
+                          <p className="font-sans">{inquiry.message}</p>
+                        </div>
+                      )}
+
+                      <div className="text-[10px] font-mono text-neutral-400 text-right">
+                        Submitted: {new Date(inquiry.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: GLOBALS SETTINGS */}
           {activeTab === 'globals' && (
             <div className="bg-white p-6 sm:p-10 rounded-3xl border border-neutral-200 shadow-2xs max-w-5xl">
               <div className="pb-6 border-b border-neutral-100 mb-8">
                 <h2 className="font-display font-bold text-xl text-black">Studio Copy & Hero Positioning</h2>
                 <p className="text-xs text-neutral-500 font-mono mt-1">
-                  100% dynamic CMS driven statements and metrics.
+                  100% dynamic CMS driven statements and realistic business impact metrics.
                 </p>
               </div>
 
@@ -948,61 +1159,79 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                 {/* Studio Metrics */}
                 <div className="pt-6 border-t border-neutral-100">
                   <span className="text-xs font-mono font-semibold uppercase text-neutral-400 tracking-wider block mb-4">
-                    Studio Key Traction Metrics
+                    4 Business-Driven Studio Impact Metrics
                   </span>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200">
-                      <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">Metric 1</label>
+                      <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">Global Clients</label>
                       <input
                         type="text"
-                        placeholder="Value (e.g. 6)"
-                        value={globalsForm.stats_metric_1_val || ''}
-                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_metric_1_val: e.target.value })}
-                        className="w-full px-3 py-2 mb-2 rounded-lg border border-neutral-200 text-sm bg-white font-bold font-mono text-black focus:ring-1 focus:ring-black focus:outline-none transition-all"
+                        placeholder="40+"
+                        value={globalsForm.stats_clients_val || ''}
+                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_clients_val: e.target.value })}
+                        className="w-full px-3 py-2 mb-2 rounded-lg border border-neutral-200 text-sm bg-white font-bold font-mono text-black focus:ring-1 focus:ring-black focus:outline-none"
                       />
                       <input
                         type="text"
-                        placeholder="Label"
-                        value={globalsForm.stats_metric_1_label || ''}
-                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_metric_1_label: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs bg-white text-black focus:ring-1 focus:ring-black focus:outline-none transition-all"
+                        placeholder="Global Enterprise Clients"
+                        value={globalsForm.stats_clients_label || ''}
+                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_clients_label: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs bg-white text-black focus:ring-1 focus:ring-black focus:outline-none"
                       />
                     </div>
 
                     <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200">
-                      <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">Metric 2</label>
+                      <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">Delivered Systems</label>
                       <input
                         type="text"
-                        placeholder="Value (e.g. $28M+)"
-                        value={globalsForm.stats_metric_2_val || ''}
-                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_metric_2_val: e.target.value })}
-                        className="w-full px-3 py-2 mb-2 rounded-lg border border-neutral-200 text-sm bg-white font-bold font-mono text-black focus:ring-1 focus:ring-black focus:outline-none transition-all"
+                        placeholder="150+"
+                        value={globalsForm.stats_delivered_val || ''}
+                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_delivered_val: e.target.value })}
+                        className="w-full px-3 py-2 mb-2 rounded-lg border border-neutral-200 text-sm bg-white font-bold font-mono text-black focus:ring-1 focus:ring-black focus:outline-none"
                       />
                       <input
                         type="text"
-                        placeholder="Label"
-                        value={globalsForm.stats_metric_2_label || ''}
-                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_metric_2_label: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs bg-white text-black focus:ring-1 focus:ring-black focus:outline-none transition-all"
+                        placeholder="Software & AI Systems Shipped"
+                        value={globalsForm.stats_delivered_label || ''}
+                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_delivered_label: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs bg-white text-black focus:ring-1 focus:ring-black focus:outline-none"
                       />
                     </div>
 
                     <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200">
-                      <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">Metric 3</label>
+                      <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">Capital Raised</label>
                       <input
                         type="text"
-                        placeholder="Value (e.g. 100%)"
-                        value={globalsForm.stats_metric_3_val || ''}
-                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_metric_3_val: e.target.value })}
-                        className="w-full px-3 py-2 mb-2 rounded-lg border border-neutral-200 text-sm bg-white font-bold font-mono text-black focus:ring-1 focus:ring-black focus:outline-none transition-all"
+                        placeholder="$45M+"
+                        value={globalsForm.stats_capital_val || ''}
+                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_capital_val: e.target.value })}
+                        className="w-full px-3 py-2 mb-2 rounded-lg border border-neutral-200 text-sm bg-white font-bold font-mono text-black focus:ring-1 focus:ring-black focus:outline-none"
                       />
                       <input
                         type="text"
-                        placeholder="Label"
-                        value={globalsForm.stats_metric_3_label || ''}
-                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_metric_3_label: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs bg-white text-black focus:ring-1 focus:ring-black focus:outline-none transition-all"
+                        placeholder="Follow-on Capital Raised"
+                        value={globalsForm.stats_capital_label || ''}
+                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_capital_label: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs bg-white text-black focus:ring-1 focus:ring-black focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200">
+                      <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">Foundry Speed</label>
+                      <input
+                        type="text"
+                        placeholder="14 Days"
+                        value={globalsForm.stats_speed_val || ''}
+                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_speed_val: e.target.value })}
+                        className="w-full px-3 py-2 mb-2 rounded-lg border border-neutral-200 text-sm bg-white font-bold font-mono text-black focus:ring-1 focus:ring-black focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Rapid MVP Prototype Sprint"
+                        value={globalsForm.stats_speed_label || ''}
+                        onChange={(e) => setGlobalsForm({ ...globalsForm, stats_speed_label: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-neutral-200 text-xs bg-white text-black focus:ring-1 focus:ring-black focus:outline-none"
                       />
                     </div>
                   </div>
@@ -1066,7 +1295,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
             </div>
           )}
 
-          {/* TAB 3: API ENDPOINTS */}
+          {/* TAB 4: API ENDPOINTS */}
           {activeTab === 'api' && (
             <div className="bg-white p-6 sm:p-10 rounded-3xl border border-neutral-200 shadow-2xs max-w-5xl space-y-6">
               <div>
@@ -1082,6 +1311,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                   { method: 'GET', path: '/api/ventures/:slug', desc: 'Returns single venture object by slug or integer ID' },
                   { method: 'POST', path: '/api/ventures', desc: 'Creates a new venture in SQLite engine' },
                   { method: 'PUT', path: '/api/ventures/:id', desc: 'Updates venture fields (used during Acid Test)' },
+                  { method: 'GET', path: '/api/inquiries', desc: 'Returns all client consultation requests and venture proposals' },
+                  { method: 'POST', path: '/api/inquiries', desc: 'Public endpoint to submit consultation requests' },
+                  { method: 'GET', path: '/api/services', desc: 'Returns studio capabilities & service practice areas' },
                   { method: 'GET', path: '/api/globals', desc: 'Returns studio hero statements, metrics, and contact metadata' },
                   { method: 'GET', path: '/api/health', desc: 'Uptime, version, and database record health' },
                 ].map((ep) => (
@@ -1105,7 +1337,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                       <button
                         onClick={() => handleCopyEndpoint(`http://localhost:1337${ep.path.replace(':slug', 'kiteflow-ai').replace(':id', '1')}`)}
                         className="p-2 rounded-lg hover:bg-neutral-200 text-neutral-600 hover:text-black transition-colors"
-                        title="Copy endpoint URL"
                       >
                         {copiedEndpoint?.includes(ep.path) ? (
                           <Check className="w-4 h-4 text-black" />
@@ -1132,14 +1363,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
         </main>
       </div>
 
-      {/* GRAND WIDE & TALL POPUP MODAL FOR ADDING / EDITING VENTURE */}
+      {/* GRAND POPUP MODAL FOR ADDING / EDITING VENTURE */}
       {isModalOpen && editingVenture && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 overflow-y-auto animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-4xl max-h-[92vh] rounded-3xl shadow-2xl border border-neutral-200 flex flex-col justify-between overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="p-6 sm:p-8 border-b border-neutral-100 flex items-center justify-between shrink-0 bg-white">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center font-bold shadow-sm transition-transform duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center font-bold shadow-sm">
                   {editingVenture.image_symbol === 'shield' && <Shield className="w-6 h-6" />}
                   {editingVenture.image_symbol === 'network' && <Network className="w-6 h-6" />}
                   {editingVenture.image_symbol === 'activity' && <Activity className="w-6 h-6" />}
@@ -1163,13 +1394,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                 onClick={handleCloseModal}
                 disabled={isSaving}
                 className="p-2.5 rounded-xl text-neutral-400 hover:text-black hover:bg-neutral-100 transition-colors disabled:opacity-50"
-                title="Close dialog"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Scrollable Form with Clean Card Panels */}
+            {/* Modal Scrollable Form */}
             <form id="venture-modal-form" onSubmit={handleSaveVenture} className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1 bg-[#FAFAFA]">
               {/* Card Panel 1: Core Identity */}
               <div className="bg-white p-6 rounded-2xl border border-neutral-200 shadow-2xs space-y-4">
@@ -1267,7 +1497,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                     required
                     value={editingVenture.one_liner || ''}
                     onChange={(e) => setEditingVenture({ ...editingVenture, one_liner: e.target.value })}
-                    placeholder="Sharp 1-sentence value proposition displayed on portfolio card"
+                    placeholder="Sharp 1-sentence value proposition"
                     className="w-full px-4 py-3 rounded-xl border border-neutral-200 text-xs text-black focus:ring-2 focus:ring-black focus:border-black focus:outline-none transition-all bg-neutral-50/60 focus:bg-white"
                   />
                 </div>
@@ -1281,7 +1511,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                       type="text"
                       value={editingVenture.metrics || ''}
                       onChange={(e) => setEditingVenture({ ...editingVenture, metrics: e.target.value })}
-                      placeholder="e.g. $2.4M Seed · 140+ Customers"
+                      placeholder="e.g. $3.2M Seed · 85+ Clients"
                       className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 text-xs font-mono text-black focus:ring-2 focus:ring-black focus:border-black focus:outline-none transition-all bg-neutral-50/60 focus:bg-white"
                     />
                   </div>
@@ -1337,7 +1567,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-mono font-semibold text-neutral-700 mb-2">
-                      Real Image URL (Unsplash or custom URL)
+                      Real Image URL
                     </label>
                     <input
                       type="url"
@@ -1346,9 +1576,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                       placeholder="https://images.unsplash.com/photo-..."
                       className="w-full px-4 py-2.5 rounded-xl border border-neutral-200 text-xs font-mono text-black focus:ring-2 focus:ring-black focus:border-black focus:outline-none transition-all bg-neutral-50/60 focus:bg-white mb-2"
                     />
-                    <span className="text-[11px] font-mono text-neutral-400 block">
-                      Leave empty to automatically render our generative animated blueprint!
-                    </span>
                   </div>
 
                   <div>
@@ -1379,14 +1606,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
 
                 <div>
                   <label className="block text-xs font-mono font-semibold text-neutral-700 mb-2">
-                    Full Venture Thesis (Multi-paragraph description) *
+                    Full Venture Thesis *
                   </label>
                   <textarea
                     rows={5}
                     required
                     value={editingVenture.description || ''}
                     onChange={(e) => setEditingVenture({ ...editingVenture, description: e.target.value })}
-                    placeholder="Comprehensive multi-paragraph breakdown of the problem, studio thesis, tech stack, and customer traction..."
+                    placeholder="Comprehensive multi-paragraph breakdown..."
                     className="w-full px-4 py-3.5 rounded-2xl border border-neutral-200 text-xs font-sans text-black leading-relaxed focus:ring-2 focus:ring-black focus:border-black focus:outline-none transition-all bg-neutral-50/60 focus:bg-white"
                   />
                 </div>
@@ -1420,7 +1647,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
               </div>
             </form>
 
-            {/* Modal Sticky Footer with Animated Save State */}
+            {/* Modal Sticky Footer */}
             <div className="p-6 sm:p-8 border-t border-neutral-100 bg-white flex items-center justify-between gap-4 shrink-0">
               <span className="text-xs font-mono text-neutral-500 hidden sm:inline">
                 {isSaving ? 'Writing to SQLite store...' : isSaveSuccess ? 'Saved successfully!' : 'Instant persistence on save'}
@@ -1430,7 +1657,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                   type="button"
                   onClick={handleCloseModal}
                   disabled={isSaving}
-                  className="px-5 py-2.5 rounded-xl border border-neutral-200 text-neutral-700 text-xs font-mono font-medium hover:bg-neutral-100 transition-colors disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl border border-neutral-200 text-neutral-700 text-xs font-mono font-medium hover:bg-neutral-100"
                 >
                   Cancel
                 </button>
@@ -1438,7 +1665,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
                   type="submit"
                   form="venture-modal-form"
                   disabled={isSaving}
-                  className="px-7 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-mono font-semibold transition-all duration-200 shadow-sm flex items-center gap-2 disabled:opacity-75 active:scale-95"
+                  className="px-7 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-mono font-semibold transition-all duration-200 shadow-sm flex items-center gap-2 disabled:opacity-75"
                 >
                   {isSaving ? (
                     <>

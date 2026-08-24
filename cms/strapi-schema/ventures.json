@@ -1,0 +1,64 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ventures",
+  "info": {
+    "singularName": "venture",
+    "pluralName": "ventures",
+    "displayName": "Venture",
+    "description": "Techdome Incubated Ventures and Case Studies"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "one_liner": {
+      "type": "string",
+      "required": true
+    },
+    "stage": {
+      "type": "enumeration",
+      "enum": ["Building", "Launched", "Exited"],
+      "default": "Building",
+      "required": true
+    },
+    "year": {
+      "type": "string"
+    },
+    "metrics": {
+      "type": "string"
+    },
+    "founders": {
+      "type": "string"
+    },
+    "website_url": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "image_symbol": {
+      "type": "string",
+      "default": "shield"
+    },
+    "tech_stack": {
+      "type": "json"
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

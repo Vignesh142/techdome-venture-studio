@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "inquiries",
+  "info": {
+    "singularName": "inquiry",
+    "pluralName": "inquiries",
+    "displayName": "Client Inquiry",
+    "description": "Consultation and Venture Pitch Inquiries"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "company": {
+      "type": "string"
+    },
+    "project_type": {
+      "type": "enumeration",
+      "enum": [
+        "Venture Co-Founding",
+        "Enterprise AI & Cloud",
+        "Dedicated Engineering Pod",
+        "Rapid 14-Day MVP"
+      ]
+    },
+    "budget_range": {
+      "type": "string"
+    },
+    "timeline": {
+      "type": "string"
+    },
+    "message": {
+      "type": "text"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["New", "Contacted", "In Review", "Closed"],
+      "default": "New"
+    },
+    "notes": {
+      "type": "text"
+    }
+  }
+}

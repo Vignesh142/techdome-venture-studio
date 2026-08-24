@@ -44,15 +44,18 @@ app.get('/', (req, res) => {
 // 1. Health Check
 app.get('/api/health', (req, res) => {
   const ventures = db.getVentures(true);
+  const inquiries = db.getInquiries();
   res.json({
     status: 'ok',
     service: 'Techdome Headless CMS Engine',
-    version: '2.0.0',
+    version: '2.5.0',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
     records: {
       venturesCount: ventures.length,
-      publishedCount: ventures.filter(v => v.published !== false).length
+      publishedCount: ventures.filter(v => v.published !== false).length,
+      inquiriesCount: inquiries.length,
+      newInquiriesCount: inquiries.filter(i => i.status === 'New').length
     }
   });
 });
@@ -83,7 +86,20 @@ app.put('/api/globals', (req, res) => {
   }
 });
 
-// 3. Ventures Endpoints
+// 3. Studio Services / Capabilities
+app.get('/api/services', (req, res) => {
+  try {
+    const services = db.getServices();
+    res.json({
+      success: true,
+      data: services
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 4. Ventures Endpoints
 app.get('/api/ventures', (req, res) => {
   try {
     const includeDrafts = req.query.drafts === 'true';
@@ -134,7 +150,7 @@ app.get('/api/ventures/:slugOrId', (req, res) => {
 
 app.post('/api/ventures', (req, res) => {
   try {
-    const { name, tagline, one_liner, stage, description } = req.body;
+    const { name } = req.body;
     if (!name) {
       return res.status(400).json({ success: false, error: 'Venture name is required' });
     }
@@ -193,7 +209,78 @@ app.delete('/api/ventures/:id', (req, res) => {
   }
 });
 
-// 4. Reset seed endpoint
+// 5. Inquiries & Client Leads Endpoints (CRM)
+app.get('/api/inquiries', (req, res) => {
+  try {
+    const statusFilter = req.query.status;
+    const inquiries = db.getInquiries(statusFilter);
+    res.json({
+      success: true,
+      count: inquiries.length,
+      data: inquiries
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/inquiries', (req, res) => {
+  try {
+    const { name, email } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ success: false, error: 'Name and email are required' });
+    }
+
+    const created = db.createInquiry(req.body);
+    res.status(201).json({
+      success: true,
+      message: 'Inquiry received successfully. A Techdome partner will reach out within 24 hours.',
+      data: created
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.put('/api/inquiries/:id', (req, res) => {
+  try {
+    const id = req.params.id;
+    const { status, notes } = req.body;
+    const updated = db.updateInquiryStatus(id, status, notes);
+
+    if (!updated) {
+      return res.status(404).json({ success: false, error: `Inquiry with id ${id} not found` });
+    }
+
+    res.json({
+      success: true,
+      message: 'Inquiry updated successfully',
+      data: updated
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.delete('/api/inquiries/:id', (req, res) => {
+  try {
+    const id = req.params.id;
+    const success = db.deleteInquiry(id);
+
+    if (!success) {
+      return res.status(404).json({ success: false, error: `Inquiry with id ${id} not found` });
+    }
+
+    res.json({
+      success: true,
+      message: `Inquiry ${id} deleted successfully`
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// 6. Reset seed endpoint
 app.post('/api/reset', (req, res) => {
   try {
     const resetData = db.resetToDefault();
