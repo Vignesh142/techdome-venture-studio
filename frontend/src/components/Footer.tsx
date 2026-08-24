@@ -12,7 +12,7 @@ export const Footer: React.FC<FooterProps> = ({ globals, onOpenAdmin }) => {
     <footer className="mt-28 border-t border-neutral-200 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pb-12 border-b border-neutral-100">
-          {/* Studio Summary with Official Logo (No duplicated text) */}
+          {/* Studio Summary with Official Logo */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <img
@@ -28,24 +28,24 @@ export const Footer: React.FC<FooterProps> = ({ globals, onOpenAdmin }) => {
               Institutional venture builder co-founding Day-0 software companies with deep technical conviction.
             </p>
             <span className="text-xs font-mono text-neutral-400">
-              {globals?.location || 'Hyderabad, India'}
+              {globals?.location || 'Hyderabad, India · Global Remote Pods'}
             </span>
           </div>
 
-          {/* Quick CMS & API Links */}
+          {/* Quick CMS & API Links (Relative URLs that work on any domain) */}
           <div className="flex flex-col gap-2.5 text-xs">
             <span className="font-mono text-neutral-400 uppercase tracking-widest text-[11px] mb-1 font-semibold">
               Headless Infrastructure
             </span>
             <button
               onClick={onOpenAdmin}
-              className="inline-flex items-center gap-2 text-neutral-600 hover:text-black transition-colors text-left"
+              className="inline-flex items-center gap-2 text-neutral-600 hover:text-black transition-colors text-left cursor-pointer"
             >
               <Database className="w-3.5 h-3.5" />
               <span>CMS Studio Dashboard</span>
             </button>
             <a
-              href="http://localhost:1337/api/ventures"
+              href="/api/ventures"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-neutral-600 hover:text-black transition-colors"
@@ -55,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({ globals, onOpenAdmin }) => {
               <ExternalLink className="w-3 h-3 text-neutral-400" />
             </a>
             <a
-              href="http://localhost:1337/api/globals"
+              href="/api/globals"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-neutral-600 hover:text-black transition-colors"
@@ -64,21 +64,31 @@ export const Footer: React.FC<FooterProps> = ({ globals, onOpenAdmin }) => {
               <span>Globals REST Endpoint</span>
               <ExternalLink className="w-3 h-3 text-neutral-400" />
             </a>
+            <a
+              href="/api/services"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-neutral-600 hover:text-black transition-colors"
+            >
+              <Code className="w-3.5 h-3.5" />
+              <span>Services REST Endpoint</span>
+              <ExternalLink className="w-3 h-3 text-neutral-400" />
+            </a>
           </div>
 
           {/* Contact Details */}
           <div className="flex flex-col gap-2.5 text-xs">
             <span className="font-mono text-neutral-400 uppercase tracking-widest text-[11px] mb-1 font-semibold">
-              Studio Office
+              Studio Partnerships
             </span>
             <a
-              href={`mailto:${globals?.contact_email || 'contact@techdome.net.in'}`}
+              href={`mailto:${globals?.contact_email || 'partnerships@techdome.net.in'}`}
               className="text-black font-mono transition-colors font-medium hover:underline"
             >
-              {globals?.contact_email || 'contact@techdome.net.in'}
+              {globals?.contact_email || 'partnerships@techdome.net.in'}
             </a>
             <p className="text-neutral-500 text-xs mt-1 leading-relaxed">
-              Built for Techdome live assessment. Fully driven by headless CMS engine on localhost.
+              Decoupled architecture powered by Strapi-compatible Headless CMS Engine.
             </p>
           </div>
         </div>
@@ -91,7 +101,7 @@ export const Footer: React.FC<FooterProps> = ({ globals, onOpenAdmin }) => {
           <div className="flex items-center gap-4">
             <span>Zero Hardcoded Copy</span>
             <span>•</span>
-            <span>REST API Powered</span>
+            <span className="text-black font-semibold">Strapi & Headless CMS Architecture</span>
           </div>
         </div>
       </div>

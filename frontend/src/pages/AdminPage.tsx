@@ -1346,18 +1346,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onBackToSite, onDataModifi
 
                     <div className="flex items-center gap-2 self-end sm:self-center">
                       <button
-                        onClick={() => handleCopyEndpoint(`http://localhost:1337${ep.path}`)}
-                        className="p-1.5 rounded-lg hover:bg-neutral-200 text-neutral-600"
+                        onClick={() => handleCopyEndpoint(`${window.location.origin}${ep.path}`)}
+                        className="p-1.5 rounded-lg hover:bg-neutral-200 text-neutral-600 cursor-pointer"
                         title="Copy endpoint"
                       >
                         <Copy className="w-3.5 h-3.5" />
                       </button>
 
                       <a
-                        href={`http://localhost:1337${ep.path}`}
+                        href={ep.path}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[11px] font-mono text-black font-semibold inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-neutral-200 bg-white"
+                        className="text-[11px] font-mono text-black font-semibold inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-100 transition-colors"
                       >
                         <span>JSON</span>
                         <ExternalLink className="w-3 h-3" />
